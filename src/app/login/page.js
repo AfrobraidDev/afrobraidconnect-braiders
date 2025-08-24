@@ -143,9 +143,9 @@ export default function LoginPage() {
           Haven&apos;t verified my account?{" "}
           <Link
             href="/resend-verification"
-            className="font-semibold text-indigo-600 hover:underline"
+            className="font-medium text-indigo-600 hover:underline"
           >
-            Request a new one.
+            Revalidate
           </Link>
         </p>
       </div>
