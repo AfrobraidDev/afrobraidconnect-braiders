@@ -5,27 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
-
-const GoogleIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 48 48">
-    <path
-      fill="#FFC107"
-      d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039L38.802 8.92C34.343 4.931 29.599 3 24 3C12.954 3 4 11.954 4 23s8.954 20 20 20s20-8.954 20-20c0-1.341-.138-2.65-.389-3.917z"
-    ></path>
-    <path
-      fill="#FF3D00"
-      d="M6.306 14.691c-1.328 2.39-2.113 5.14-2.113 8.131c0 3.011.794 5.76 2.133 8.161l-5.01-3.915C1.123 25.61 1 24.331 1 23s.123-2.61.326-3.754l5.001-4.555z"
-    ></path>
-    <path
-      fill="#4CAF50"
-      d="M24 43c5.166 0 9.728-1.742 13.053-4.686l-4.997-3.915A11.934 11.934 0 0 1 24 35c-4.411 0-8.138-2.83-9.613-6.634l-5.002 3.915C11.189 38.219 17.153 43 24 43z"
-    ></path>
-    <path
-      fill="#1976D2"
-      d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.16-4.082 5.571l4.997 3.915C40.923 34.423 44 29.213 44 23c0-1.341-.138-2.65-.389-3.917z"
-    ></path>
-  </svg>
-);
+import { FcGoogle } from "react-icons/fc";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -146,7 +126,7 @@ export default function LoginPage() {
           onClick={handleGoogleSignIn}
           className="w-full flex items-center justify-center gap-3 px-4 py-3 font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
         >
-          <GoogleIcon />
+          <FcGoogle />
           <span>Continue with Google</span>
         </button>
 
