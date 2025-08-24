@@ -73,6 +73,7 @@ function VerificationComponent() {
       )}
       <p className="text-gray-600">
         {message}
+        <br />
         <Link
           href="/resend-verification"
           className="font-semibold text-indigo-600 hover:underline"
