@@ -1,5 +1,4 @@
 // src/auth.js
-
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { apiController } from "./utils/apiController";
@@ -21,11 +20,10 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+        if (!credentials?.email || !credentials?.password) return null;
+
         try {
-          const user = await apiController({
+          const userFromApi = await apiController({
             method: "POST",
             url: "/auth/login/",
             data: {
@@ -34,13 +32,16 @@ export const authOptions = {
             },
           });
 
-          if (user) {
+          if (userFromApi) {
+            // ✅ Return all necessary fields from your Django API
             return {
-              id: user.id,
-              email: user.email,
-              name: `${user.first_name} ${user.last_name}`,
-              accessToken: user.access_token,
-              refreshToken: user.refresh_token,
+              id: userFromApi.id,
+              email: userFromApi.email,
+              name: `${userFromApi.first_name} ${userFromApi.last_name}`,
+              accessToken: userFromApi.access_token,
+              refreshToken: userFromApi.refresh_token,
+              role: userFromApi.role, // Add this
+              braiderProfile: userFromApi.braider_profile, // Add this
             };
           }
           return null;
@@ -65,8 +66,13 @@ export const authOptions = {
           });
 
           if (data.access) {
+            // ✅ Attach all necessary data to the user object
             user.accessToken = data.access;
             user.refreshToken = data.refresh;
+            user.id = data.id;
+            user.role = data.role;
+            user.name = `${data.first_name} ${data.last_name}`;
+            user.braiderProfile = data.braider_profile;
             return true;
           }
           return false;
@@ -80,15 +86,23 @@ export const authOptions = {
       return false;
     },
     async jwt({ token, user }) {
+      // This is called after signIn. Persist all the data to the token.
       if (user) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
+        token.id = user.id;
+        token.role = user.role;
+        token.braiderProfile = user.braiderProfile;
       }
       return token;
     },
     async session({ session, token }) {
+      // This makes the data available to your frontend components.
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
+      session.user.id = token.id;
+      session.user.role = token.role;
+      session.user.braiderProfile = token.braiderProfile;
       return session;
     },
   },
