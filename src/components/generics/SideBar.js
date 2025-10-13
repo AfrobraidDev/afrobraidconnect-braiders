@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { LayoutDashboard, CalendarDays, Users, Wallet, GalleryVertical, Globe, LifeBuoy, Menu, X } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, Users, Wallet, GalleryVertical, Globe, Settings, LifeBuoy, Menu, X } from 'lucide-react';
 
 // Reusable NavLink component for links within the sidebar
 const NavLink = ({ href, icon: Icon, children, active = false }) => {
@@ -40,8 +40,9 @@ const SidebarContent = () => (
     {/* Bottom Section: Settings and Support */}
     <div>
       <ul className="space-y-2">
-        <NavLink href="/settings/language" icon={Globe}>Language</NavLink>
-        <NavLink href="/support" icon={LifeBuoy}>Support</NavLink>
+        <NavLink href="/dashboard/settings" icon={Settings}>Settings</NavLink>
+        <NavLink href="/dashboard/language" icon={Globe}>Language</NavLink>
+        <NavLink href="/dashboard/support" icon={LifeBuoy}>Support</NavLink>
       </ul>
     </div>
   </div>
