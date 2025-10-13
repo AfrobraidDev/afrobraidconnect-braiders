@@ -81,7 +81,7 @@ export default function DocumentVerification({ verificationStatus }) {
       );
       setIsLoading(false);
     }
-    // No need to set loading to false on success, as the page will redirect.
+    
   };
 
   return (
