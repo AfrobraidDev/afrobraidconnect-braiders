@@ -7,6 +7,8 @@
 }
 
 @theme inline {
+  --color-theme-primary: #b5734c;
+  --color-theme-primary-hover: #c2825d;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

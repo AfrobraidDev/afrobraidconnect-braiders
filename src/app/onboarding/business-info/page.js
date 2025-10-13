@@ -10,7 +10,7 @@ export default function BusinessInfoPage() {
     const handleContinue = (formData) => {
         console.log("Saving step 1 data:", formData);
         
-        router.push('/onboarding/services'); 
+        router.push('/onboarding/identity'); 
     };
 
     
