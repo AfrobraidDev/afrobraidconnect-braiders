@@ -1,8 +1,8 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import LoginView from '@/components/setup/Login';
+import SignUpView from '@/components/setup/SignUp';
 
-export default function LoginPage() {
+export default function SignUpPage() {
     const router = useRouter();
 
     const handleBack = () => {
@@ -11,7 +11,7 @@ export default function LoginPage() {
     };
 
     return (
-        <LoginView 
+        <SignUpView 
             onBack={handleBack}
         />
     );
