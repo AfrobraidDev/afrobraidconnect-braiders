@@ -16,11 +16,11 @@ const StatusBadge = ({ status }) => (
 );
 
 export const TransactionsTable = () => (
-  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-    <h3 className="text-lg font-bold text-gray-800 p-4 border-b">Recent Transactions</h3>
+  <div className="bg-white shadow-sm overflow-hidden">
+    <h3 className="text-lg font-bold text-gray-800 p-4 border-b !border-gray-300">Recent Transactions</h3>
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+        <thead className="text-xs text-left text-gray-700 uppercase bg-gray-50">
           <tr>
             <th className="px-6 py-3">Date</th>
             <th className="px-6 py-3">Client</th>
@@ -31,7 +31,7 @@ export const TransactionsTable = () => (
         </thead>
         <tbody>
           {transactions.map(tx => (
-            <tr key={tx.id} className="border-b hover:bg-gray-50">
+            <tr key={tx.id} className=" hover:bg-gray-50">
               <td className="px-6 py-4 text-gray-600">{tx.date}</td>
               <td className="px-6 py-4 font-medium text-gray-900">{tx.client}</td>
               <td className="px-6 py-4 hidden md:table-cell">{tx.service}</td>

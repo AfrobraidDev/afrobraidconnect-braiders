@@ -34,7 +34,7 @@ export const EarningsScreen = () => {
 
         {/* Right Column: Payouts and Insights */}
         <div className="lg:col-span-1 space-y-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm">
+          <div className="bg-white p-6 shadow-sm">
             <h3 className="text-lg font-bold text-gray-800 mb-4">Payouts</h3>
             <div className="space-y-3 text-sm mb-5">
               <p className="flex justify-between"><span>Next Payout Date:</span> <span className="font-semibold">Nov 1, 2025</span></p>
@@ -44,7 +44,7 @@ export const EarningsScreen = () => {
               Request Payout
             </button>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm">
+          <div className="bg-white p-6 shadow-sm">
             <h3 className="text-lg font-bold text-gray-800 mb-4">Insights</h3>
             <div className="space-y-3 text-sm">
                <p className="flex justify-between"><span>Avg. Income / Booking:</span> <span className="font-semibold">₦21,500</span></p>

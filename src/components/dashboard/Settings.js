@@ -30,7 +30,7 @@ const AccountSettings = () => (
     <InputRow label="Current Password" id="currentPass" type="password" />
     <InputRow label="New Password" id="newPass" type="password" />
     <InputRow label="Confirm New Password" id="confirmPass" type="password" />
-    <button className="px-4 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700">Change Password</button>
+    <button className="px-4 py-2 bg-gray-800 text-white font-semibold hover:bg-gray-700">Change Password</button>
     <hr/>
     <ToggleRow title="Two-Factor Authentication (2FA)" description="Add an extra layer of security to your account." enabled={false} />
   </SettingsSection>
@@ -61,12 +61,12 @@ const PrivacySecurity = () => (
 
 const DangerZone = () => (
    <SettingsSection title="Danger Zone" description="Manage high-risk actions for your account.">
-     <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+     <div className="p-4 bg-red-50 border border-red-200">
         <h4 className="font-bold text-red-800">Deactivate Account</h4>
         <p className="text-sm text-red-700 mt-1">Your profile and portfolio will be temporarily hidden until you log back in.</p>
         <button className="mt-2 text-sm font-semibold text-red-600 hover:underline">Deactivate</button>
      </div>
-     <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+     <div className="p-4 bg-red-50 border border-red-200">
         <h4 className="font-bold text-red-800">Delete Account Permanently</h4>
         <p className="text-sm text-red-700 mt-1">This action is irreversible. All your data, including bookings and earnings, will be permanently deleted.</p>
         <button className="mt-2 text-sm font-semibold text-red-600 hover:underline">Request Deletion</button>

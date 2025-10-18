@@ -14,7 +14,6 @@ const mockPortfolio = [
   { id: 5, title: 'Dreads', description: '#classic', imageUrl: '/images/styles/hairstyle5.png', likes: 152 },
   { id: 6, title: 'Styled Cornrows', description: '#sidebraids', imageUrl: '/images/styles/hairstyle6.png', likes: 230 },
   { id: 7, title: 'Fulani Braids', description: '#tribalbraids', imageUrl: '/images/styles/hairstyle7.png', likes: 98 },
-
 ];
 
 export const PortfolioScreen = () => {
@@ -31,7 +30,7 @@ export const PortfolioScreen = () => {
           </div>
           <button 
             onClick={() => setModalOpen(true)}
-            className="w-full md:w-auto flex items-center justify-center gap-2 bg-theme-primary text-white font-bold py-2.5 px-4 rounded-lg hover:bg-opacity-90 transition-all shadow-sm"
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-theme-primary text-white font-bold py-2.5 px-4 hover:bg-opacity-90 transition-all shadow-sm"
           >
             <PlusCircle size={20} />
             Add New Work

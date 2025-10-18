@@ -68,7 +68,7 @@ export default function IdDocumentVerificationPage({ onBack }) {
                     <button
                         onClick={handleContinue}
                         type="button"
-                        className="px-6 py-3 border-1 border-[#b5734c] text-[#b5734c] font-medium text-base rounded-lg shadow-sm hover:bg-[#b5734c] hover:text-white transition duration-200"
+                        className="px-6 py-3 border-1 border-[#b5734c] text-[#b5734c] font-medium text-base shadow-sm hover:bg-[#b5734c] hover:text-white transition duration-200"
                     >
                         Skip
                     </button>

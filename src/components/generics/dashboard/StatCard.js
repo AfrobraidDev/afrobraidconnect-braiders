@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const StatCard = ({ icon: Icon, title, value, change }) => (
-  <div className="bg-white p-5 rounded-xl shadow-sm flex items-center justify-between">
+  <div className="bg-white p-5 shadow-sm flex items-center justify-between">
     <div>
       <p className="text-sm font-medium text-gray-500">{title}</p>
       <p className="text-2xl font-bold text-gray-800">{value}</p>

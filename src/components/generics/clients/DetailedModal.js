@@ -10,7 +10,7 @@ export const ClientDetailsModal = ({ client, isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black/60 z-50 flex justify-end">
       <div className="bg-gray-50 h-full w-full max-w-lg shadow-xl relative animate-slide-in-right flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-white">
+        <div className="flex items-center justify-between p-4 border-b border-gray-300 bg-white">
           <h3 className="text-lg font-bold text-gray-800">Client Profile</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={24} />
@@ -31,7 +31,7 @@ export const ClientDetailsModal = ({ client, isOpen, onClose }) => {
           </div>
 
           {/* Spending Summary */}
-          <div className="bg-white p-4 rounded-xl shadow-sm">
+          <div className="bg-white p-4 shadow-sm">
              <h4 className="font-bold text-gray-700 mb-3 flex items-center gap-2"><BarChart3 size={18} /> Spending Summary</h4>
              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div><p className="text-gray-500">Total Spent</p><p className="font-semibold text-gray-800">{client.totalSpent}</p></div>
@@ -42,7 +42,7 @@ export const ClientDetailsModal = ({ client, isOpen, onClose }) => {
           </div>
 
           {/* Booking History */}
-          <div className="bg-white p-4 rounded-xl shadow-sm">
+          <div className="bg-white p-4 shadow-sm">
             <h4 className="font-bold text-gray-700 mb-3 flex items-center gap-2"><BookOpen size={18} /> Booking History</h4>
             <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
               {client.bookingHistory.map(booking => (
@@ -58,15 +58,15 @@ export const ClientDetailsModal = ({ client, isOpen, onClose }) => {
           </div>
 
            {/* Notes */}
-           <div className="bg-white p-4 rounded-xl shadow-sm">
+           <div className="bg-white p-4 shadow-sm">
             <h4 className="font-bold text-gray-700 mb-2 flex items-center gap-2"><Edit2 size={18} /> Notes</h4>
             <p className="text-sm text-gray-600 italic">Prefers early morning appointments. Slightly tender-headed.</p>
            </div>
         </div>
 
         {/* Actions Footer */}
-        <div className="bg-white p-4 flex justify-end gap-3 border-t">
-          <button className="px-4 py-2 bg-theme-primary text-white font-semibold rounded-lg hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-sm">
+        <div className="bg-white p-4 flex justify-end gap-3 border-t border-gray-300">
+          <button className="px-4 py-2 bg-theme-primary text-white font-semibold hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-sm">
             <MessageSquare size={16} /> Message Client
           </button>
         </div>

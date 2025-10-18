@@ -95,7 +95,6 @@ const ImageUploader = ({ title, Icon, shape = "square", onFileChange }) => {
 
 export default function PortfolioView({ onStepComplete, onBack }) {
   // State for all form fields
-  const [profilePicture, setProfilePicture] = useState(null);
   const [businessLogo, setBusinessLogo] = useState(null);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [workPhotos, setWorkPhotos] = useState([]);
@@ -107,9 +106,9 @@ export default function PortfolioView({ onStepComplete, onBack }) {
 
   // Form validation
   useEffect(() => {
-    const isValid = profilePicture !== null && workPhotos.length > 0;
+    const isValid = businessLogo !== null && workPhotos.length > 0;
     setIsFormValid(isValid);
-  }, [profilePicture, workPhotos]);
+  }, [businessLogo, workPhotos]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -160,7 +159,6 @@ export default function PortfolioView({ onStepComplete, onBack }) {
       return;
     }
     const portfolioData = {
-      profilePicture: profilePicture ? profilePicture.name : null,
       businessLogo: businessLogo ? businessLogo.name : null,
       skills: selectedSkills,
       workPhotos: workPhotos.map((file) => file.name),
@@ -195,15 +193,9 @@ export default function PortfolioView({ onStepComplete, onBack }) {
           {/* --- Profile Picture & Logo Section --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ImageUploader
-              title="Profile Picture*"
+              title="Business Logo*"
               Icon={ImageIcon}
               shape="circle"
-              onFileChange={setProfilePicture}
-            />
-            <ImageUploader
-              title="Business Logo"
-              Icon={Building}
-              shape="square"
               onFileChange={setBusinessLogo}
             />
           </div>

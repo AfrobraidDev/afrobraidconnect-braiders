@@ -4,8 +4,16 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, Lock, Mail } from "lucide-react";
+import { ChevronDown, Globe, Lock, Mail } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+
+
+const AfroBraidLogo = () => (
+    <div className="flex items-center space-x-2">
+        <Image src="/images/setuplogo.png" alt="AfroBraids Connect Logo" width={36} height={36} className="object-contain" priority></Image>
+        <span className="text-sm font-semibold text-gray-800">afrobraids connect</span>
+    </div>
+);
 
 export default function LoginView({ onBack }) {
   const router = useRouter();
@@ -53,13 +61,18 @@ export default function LoginView({ onBack }) {
           </button>
         </header> */}
 
+        {/* Header/Logo Section */}
+          <header className="absolute top-6 left-6 sm:left-10 lg:left-16">
+              <AfroBraidLogo />
+          </header>
+
         {/* Main Content Form */}
         <main className="flex-grow flex flex-col justify-center max-w-md mx-auto py-10">
           <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900 mb-2">
             Afro Connect for Braiders
           </h1>
           <p className="text-base text-gray-600 mb-8">
-            Create an account or log in to book and manage your appointments.
+            Log in to book and manage your appointments.
           </p>
 
           {/* Email Form */}
@@ -156,7 +169,7 @@ export default function LoginView({ onBack }) {
               Sign Up as a Professional
             </Link>
           </p>
-          <p className="text-center text-sm text-gray-600 mt-8">
+          <p className="text-center text-sm text-gray-600 mt-2">
             Haven&apos;t verified my account?{" "}
             <Link
               href="/resend-verification"
@@ -167,51 +180,18 @@ export default function LoginView({ onBack }) {
           </p>
         </main>
 
-        {/* Footer/Contact Section */}
-        <footer className="mt-12 flex justify-between items-center text-xs text-gray-500">
+        {/* Footer Links */}
+        <footer className="mt-12 flex justify-between items-center text-xs text-gray-500 pt-4">
           <div className="flex items-center space-x-1">
-            <svg
-              className="w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0 1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
-            <span>support@afrobraidconnect.com</span>
+            <a href="mailto:support@afrobraidconnect.com" className="flex items-center hover:text-gray-700 transition">
+              <Mail className="w-4 h-4 mr-1" />
+              support@afrobraidconnect.com
+            </a>
           </div>
-          <div className="flex items-center space-x-1">
-            <svg
-              className="w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10zM2.5 9h19M2.5 15h19"></path>
-            </svg>
+          <div className="flex items-center space-x-1 hover:text-gray-700 cursor-pointer">
+            <Globe className="w-4 h-4" />
             <span className="font-bold">ENG</span>
-            <svg
-              className="w-3 h-3"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
+            <ChevronDown className="h-4 w-4" />
           </div>
         </footer>
       </div>

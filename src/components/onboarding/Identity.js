@@ -101,7 +101,7 @@ export default function IdDocumentVerification({ verificationStatus }) {
         <div> 
 
           {/* Identity Verification Card (Card styling based on your image) */}
-          <div className="p-6 bg-white border border-gray-200 rounded-xl shadow-md">
+          <div className="p-6 bg-white border border-gray-200 shadow-md">
             
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -131,7 +131,7 @@ export default function IdDocumentVerification({ verificationStatus }) {
                 <button
                   onClick={handleVerification}
                   disabled={isLoading}
-                  className="w-full py-3 px-4 font-bold text-white bg-[#b5734c] rounded-lg shadow-xl hover:bg-[#c2825d] disabled:bg-gray-400 focus:outline-none transition duration-200"
+                  className="w-full py-3 px-4 font-bold text-white bg-[#b5734c] shadow-xl hover:bg-[#c2825d] disabled:bg-gray-400 focus:outline-none transition duration-200"
                 >
                   {isLoading ? "Starting Session..." : "Verify My ID"}
                 </button>

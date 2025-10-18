@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const ClientStatCard = ({ icon: Icon, title, value, colorClass }) => (
-  <div className="bg-white p-4 rounded-xl shadow-sm flex items-start gap-4">
+  <div className="bg-white p-4 shadow-sm flex items-start gap-4">
     <div className={`p-3 rounded-lg ${colorClass}`}>
       <Icon className="w-6 h-6 text-white" />
     </div>

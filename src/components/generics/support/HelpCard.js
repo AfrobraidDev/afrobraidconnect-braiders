@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const HelpCard = ({ icon: Icon, title, description }) => (
-  <a href="#" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col items-start gap-3">
+  <a href="#" className="bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col items-start gap-3">
     <div className="bg-theme-primary/10 p-3 rounded-lg">
       <Icon className="w-6 h-6 text-theme-primary" />
     </div>

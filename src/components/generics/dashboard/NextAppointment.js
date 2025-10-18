@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 
 export const NextAppointment = () => (
-  <div className="bg-white p-6 rounded-xl shadow-sm">
+  <div className="bg-white p-6 shadow-sm">
     <h3 className="font-bold text-gray-800 mb-4">Next Appointment</h3>
     <div className="flex items-center space-x-4">
       <Image

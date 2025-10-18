@@ -5,25 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { apiController } from "@/utils/apiController";
 import { PhoneInput } from "react-international-phone";
-import {
-  Lock,
-  Eye,
-  EyeOff,
-  User,
-  Mail,
-  ChevronLeft,
-  Globe,
-  ChevronDown,
-} from "lucide-react";
+import { Lock, Eye, EyeOff, User, Mail, ChevronLeft, Globe, ChevronDown } from "lucide-react";
 
-// --- Custom Input Field Component for consistent styling ---
-// Applies the clean aesthetic: padding, border, focus color (#b47550)
+
 const InputField = ({ icon, label, ...props }) => {
-  // Determine if this input should have the password toggle logic
   const isPassword = 
     props.name === "password" || props.name === "confirm_password";
-  
-  // Use a local state for password visibility if it is a password field
+
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -45,13 +33,13 @@ const InputField = ({ icon, label, ...props }) => {
         <input
           id={props.name}
           className={`
-            w-full py-3 px-4 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 
-            focus:outline-none focus:ring-1 focus:ring-[#b47550] focus:border-[#b47550] transition
+            w-full py-3 px-4 border border-gray-300 text-gray-900 placeholder-gray-400 
+            focus:outline-none  focus:ring-[#b5734c] focus:border-[#b5734c] transition
             ${icon ? "pl-10" : "pl-4"} /* Adjust padding based on icon presence */
           `}
           {...props}
           // Set the type based on the toggle state for password fields
-          type={isPassword && !showPassword ? "password" : props.type}
+          type={isPassword ? (showPassword ? "text" : "password") : props.type}
         />
 
         {/* Password Visibility Toggle Button */}
@@ -69,8 +57,13 @@ const InputField = ({ icon, label, ...props }) => {
     </div>
   );
 };
-// --- End InputField ---
 
+const AfroBraidLogo = () => (
+    <div className="flex items-center space-x-2">
+        <Image src="/images/setuplogo.png" alt="AfroBraids Connect Logo" width={36} height={36} className="object-contain" priority></Image>
+        <span className="text-sm font-semibold text-gray-800">afrobraids connect</span>
+    </div>
+);
 
 export default function SignupForm({ onBack }) {
   const [formData, setFormData] = useState({
@@ -121,34 +114,38 @@ export default function SignupForm({ onBack }) {
   return (
     <div className="min-h-screen flex bg-white">
       {/* Back Button */}
-        <header className="relative pb-10">
+        {/* <header className="relative pb-10">
           <button
             onClick={onBack}
-            className="absolute -top-4 -left-4 sm:top-0 sm:left-0 p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition shadow-sm"
+            className="absolute -top-4 -left-4 sm:top-0 sm:left-0 p-2 bg-white border border-gray-200 hover:bg-gray-50 transition shadow-sm"
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
           </button>
-        </header>
+        </header> */}
       {/* LEFT COLUMN: FORM AREA */}
       <div className="w-full md:w-1/2 flex flex-col justify-between p-6 sm:p-10 lg:p-16">
 
+      {/* Header/Logo Section */}
+        <header className="absolute top-6 left-6 sm:left-10 lg:left-16">
+            <AfroBraidLogo />
+        </header>
+
         {/* Form Content Wrapper */}
-        <main className="flex-grow flex flex-col justify-center max-w-md mx-auto md:mx-0 py-10">
-          {/* Header */}
+        <main className="flex-grow flex flex-col justify-center max-w-md mx-auto py-10">
           <div className="mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">Create an Account</h1>
-            <p className="text-gray-600 text-sm">Join AfroBraid Connect today!</p>
+            <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900 mb-2">Afro Connect for Braiders</h1>
+            <p className="text-gray-600 text-sm">Join AfroBraid Connect today! Create an Account</p>
           </div>
 
           {/* Form */}
           {successMessage ? (
-            <div className="p-4 text-center text-green-800 bg-green-100 border border-green-200 rounded-lg">
+            <div className="p-4 text-center text-green-800 bg-green-100 border border-green-200">
               <p>{successMessage}</p>
             </div>
           ) : (
             <>
               {error && (
-                <div className="p-3 mb-4 text-sm text-red-800 bg-red-100 border border-red-200 rounded-lg">
+                <div className="p-3 mb-4 text-sm text-red-800 bg-red-100 border border-red-200">
                   {error}
                 </div>
               )}
@@ -217,10 +214,10 @@ export default function SignupForm({ onBack }) {
                 />
 
                 {/* Phone Number - UNTOUCHED, relies on package defaults/global CSS */}
-                <div>
-                  <label className="block text-gray-900 mb-1 text-sm font-medium">Phone Number*</label>
+                {/* <div>
+                  <label className="block text-gray-900 mb-1 text-sm font-medium">Phone Number*</label> */}
                   {/* Apply the visual border/focus to the wrapper div */}
-                  <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-1 focus-within:ring-[#b47550] transition h-[48px]">
+                  {/* <div className="flex items-center border border-gray-300 focus-within:ring-1 focus-within:ring-[#b47550] transition h-[48px]">
                     <PhoneInput
                       value={phone}
                       onChange={(phone) => setPhone(phone)}
@@ -235,11 +232,11 @@ export default function SignupForm({ onBack }) {
                       placeholder="(555) 000-0000"
                     />
                   </div>
-                </div>
+                </div> */}
 
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center bg-[#b47550] text-white py-3 rounded-lg font-semibold shadow-md hover:opacity-90 transition"
+                  className="w-full flex items-center justify-center bg-[#b5734c] text-white py-3 font-semibold shadow-md hover:opacity-90 transition"
                   disabled={isLoading}
                 >
                   {isLoading ? "Submitting..." : "Finish Set Up"}

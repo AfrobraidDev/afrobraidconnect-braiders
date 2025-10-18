@@ -10,7 +10,7 @@ export const InputRow = ({ label, type = 'text', id, placeholder, defaultValue, 
         id={id}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-theme-primary/50 focus:border-theme-primary ${Icon ? 'pl-10' : ''}`}
+        className={`w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-theme-primary/50 focus:border-theme-primary ${Icon ? 'pl-10' : ''}`}
       />
     </div>
   </div>

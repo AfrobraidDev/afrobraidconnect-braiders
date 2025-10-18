@@ -19,7 +19,7 @@ const AddressInput = ({
       {placeholder}
       {required && <span className="text-red-500">*</span>}
     </label>
-    <div className="flex items-center border border-gray-300 bg-white overflow-hidden focus:border-none focus-within:ring-2 focus-within:ring-orange-300 focus-within:ring-orange-300">
+    <div className="flex items-center border border-gray-300 bg-white overflow-hidden focus-within:border-[#b5734c]  focus-within:ring-[#c2825d] transition">
       <Icon className="text-gray-500 w-5 h-5 ml-3 mr-2 flex-shrink-0" />
       <input
         type="text"

@@ -9,7 +9,7 @@ export const ActivityTabs = () => {
   const inactiveTabStyle = "text-gray-500 hover:text-gray-700";
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm">
+    <div className="bg-white p-6 shadow-sm">
       <div className="flex border-b border-gray-200">
         <button
           onClick={() => setActiveTab('bookings')}

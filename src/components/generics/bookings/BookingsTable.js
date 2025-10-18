@@ -4,7 +4,7 @@ import { StatusBadge } from './StatusBadge';
 
 export const BookingsTable = ({ bookings, onRowClick }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -22,7 +22,7 @@ export const BookingsTable = ({ bookings, onRowClick }) => {
               bookings.map((booking) => (
                 <tr 
                   key={booking.id} 
-                  className="bg-white border-b hover:bg-gray-50 cursor-pointer" 
+                  className="bg-white border-b border-gray-300 hover:bg-gray-50 cursor-pointer" 
                   onClick={() => onRowClick(booking)}
                 >
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">

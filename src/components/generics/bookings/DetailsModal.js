@@ -8,9 +8,9 @@ export const BookingDetailsModal = ({ booking, isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg relative animate-fade-in-up">
+      <div className="bg-white shadow-xl w-full max-w-lg relative animate-fade-in-up">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b border-gray-300">
           <h3 className="text-lg font-bold text-gray-800">Booking Details</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={24} />
@@ -53,17 +53,17 @@ export const BookingDetailsModal = ({ booking, isOpen, onClose }) => {
         </div>
 
         {/* Actions */}
-        <div className="bg-gray-50 p-4 flex justify-end gap-3 rounded-b-2xl">
-          <button className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2">
+        <div className="bg-gray-50 p-4 flex justify-end gap-3">
+          <button className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2">
             <MessageSquare size={16} /> Message
           </button>
           {booking.status === 'Pending' && (
-            <button className="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors flex items-center gap-2">
               <Check size={16} /> Accept
             </button>
           )}
           {booking.status !== 'Cancelled' && (
-            <button className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors flex items-center gap-2">
               <Trash2 size={16} /> Cancel
             </button>
           )}

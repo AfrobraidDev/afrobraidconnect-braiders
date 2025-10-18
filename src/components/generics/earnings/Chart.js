@@ -15,7 +15,7 @@ const data = [
 
 export const EarningsChart = () => {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm">
+    <div className="bg-white p-6 shadow-sm">
       <h3 className="text-lg font-bold text-gray-800 mb-4">Monthly Earnings Trend</h3>
       <div style={{ width: '100%', height: 300 }}>
         <ResponsiveContainer>

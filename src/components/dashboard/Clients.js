@@ -47,13 +47,13 @@ export const ClientsScreen = () => {
         </div>
 
         {/* Controls */}
-        <div className="bg-white p-4 rounded-xl shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center">
+        <div className="bg-white p-4 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center">
           <div className="relative w-full md:flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
               placeholder="Search by client name or phone..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-theme-primary/50 focus:border-theme-primary"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 focus:ring-[#b5734c] focus:border-[#b5734c] focus:outline-none"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
@@ -64,7 +64,7 @@ export const ClientsScreen = () => {
         </div>
 
         {/* Client List */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -78,7 +78,7 @@ export const ClientsScreen = () => {
               </thead>
               <tbody>
                 {filteredClients.map(client => (
-                  <tr key={client.id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => handleClientClick(client)}>
+                  <tr key={client.id} className="border-b border-gray-300 hover:bg-gray-50 cursor-pointer" onClick={() => handleClientClick(client)}>
                     <td className="px-6 py-4 font-medium text-gray-900">
                       <div className="flex items-center gap-3">
                         <Image src={client.avatar} alt={client.name} width={500} height={500} className="w-10 h-10 rounded-full object-cover"/>

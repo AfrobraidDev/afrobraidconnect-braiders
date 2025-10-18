@@ -3,7 +3,7 @@ import { Star } from 'lucide-react';
 import Image from 'next/image';
 
 export const Reviews = () => (
-  <div className="bg-white p-6 rounded-xl shadow-sm">
+  <div className="bg-white p-6 shadow-sm">
     <h3 className="font-bold text-gray-800 mb-4">Top Client Reviews</h3>
     <div className="space-y-5">
       <div className="flex items-start space-x-4">
