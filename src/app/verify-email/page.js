@@ -8,13 +8,12 @@ import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { apiController } from "@/utils/apiController";
 
 // --- Theme Colors ---
-const BRAND_COLOR = "#b5734c"; // Primary accent color (deep orange/brown)
+const BRAND_COLOR = "#b5734c"; 
 const BRAND_HOVER = "#c2825d"; 
-const LOGO_COLOR = "#d3986a"; // The slightly lighter orange/brown used for the logo
+
 
 function VerificationComponent() {
   const searchParams = useSearchParams();
-  // Using useSearchParams().get("token") directly is standard, ensuring it works in Next.js App Router
   const token = searchParams.get("token"); 
   
   const [status, setStatus] = useState("verifying");
