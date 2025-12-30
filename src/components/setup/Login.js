@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, usePathname } from "@/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,9 +12,7 @@ import { useTranslations, useLocale } from "next-intl";
 
 export default function LoginView({ onBack }) {
   const t = useTranslations("Auth");
-
   const currentLocale = useLocale();
-
   const router = useRouter();
   const pathname = usePathname();
 
@@ -50,7 +48,7 @@ export default function LoginView({ onBack }) {
 
   const handleGoogleSignIn = () => {
     signIn("google", {
-      callbackUrl: `/${currentLocale}/onboarding/business-info`,
+      callbackUrl: `/${currentLocale}/auth/callback`,
     });
   };
 
@@ -65,12 +63,24 @@ export default function LoginView({ onBack }) {
       password,
     });
 
-    setIsLoading(false);
-
     if (result.error) {
+      setIsLoading(false);
       setError("Invalid email or password. Please try again.");
     } else if (result.ok) {
-      router.push("/onboarding/business-info");
+      const session = await getSession();
+      const profile = session?.user?.braiderProfile;
+      const isPhoneVerified = profile?.is_phone_verified === true;
+      const isDocVerified =
+        profile?.document_verification_status === "VERIFIED";
+      const isPayoutsEnabled = profile?.is_payouts_enabled === true;
+
+      if (isPhoneVerified && isDocVerified && isPayoutsEnabled) {
+        router.push("/dashboard");
+      } else {
+        router.push("/onboarding/business-info");
+      }
+
+      setIsLoading(false);
     }
   };
 
