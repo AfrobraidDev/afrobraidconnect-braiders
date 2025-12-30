@@ -1,4 +1,3 @@
-// src/utils/apiController.js
 import axios from "axios";
 
 export const apiController = async ({
@@ -11,11 +10,13 @@ export const apiController = async ({
 }) => {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
+  const isFormData = data instanceof FormData;
+
   const axiosInstance = axios.create({
     baseURL,
     headers: {
-      "Content-Type": "application/json",
       Accept: "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
     },
   });
 
@@ -37,9 +38,16 @@ export const apiController = async ({
     });
     return response.data;
   } catch (error) {
-    console.error("API Controller Error:", error.response || error.message);
-    throw (
-      error.response?.data || new Error("An unexpected API error occurred.")
-    );
+    if (error.response) {
+      console.error("API Error Status:", error.response.status);
+      console.error("API Error Data:", error.response.data);
+      throw error.response.data;
+    } else if (error.request) {
+      console.error("API No Response:", error.request);
+      throw new Error("No response from server. Please check your connection.");
+    } else {
+      console.error("API Setup Error:", error.message);
+      throw error;
+    }
   }
 };

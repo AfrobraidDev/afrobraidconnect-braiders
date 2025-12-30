@@ -1,325 +1,274 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import {
-  ChevronLeft,
-  UploadCloud,
-  X,
-  Image as ImageIcon,
-  Building,
-  ChevronDown,
-  Check,
-} from "lucide-react";
-import ProgressBar from "../generics/ProgressBar";
-import Image from "next/image";
 
-const allSkills = [
-  "Box Braids",
-  "Knotless Braids",
-  "Cornrows",
-  "Ghana Weaving",
-  "Faux Locs",
-  "Dreadlocks",
-  "Twists",
-  "Natural Hair Styling",
-  "Weave Install",
-  "Wig Making",
-  "Hair Treatment",
-  "Kids Hairstyles",
-];
+import React, { useState, useEffect } from "react";
+import { useRouter } from "@/navigation";
+import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ChevronLeft } from "lucide-react";
+import toast from "react-hot-toast";
+
+import { apiController } from "@/utils/apiController";
+import ProgressBar from "../generics/ProgressBar";
+import Button from "../generics/ui/Button";
+import ImageUploader from "../generics/ui/ImageUploader";
+import SkillSelector from "../generics/ui/SkillSelector";
 
 const CURRENT_STEP = 4;
 
-// --- REUSABLE IMAGE UPLOADER COMPONENT ---
-const ImageUploader = ({ title, Icon, shape = "square", onFileChange }) => {
-  const [preview, setPreview] = useState(null);
-  const fileInputRef = useRef(null);
+export default function PortfolioView() {
+  const t = useTranslations("Portfolio");
+  const tCommon = useTranslations("Common");
+  const router = useRouter();
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
-      if (onFileChange) {
-        onFileChange(file);
-      }
-    }
-  };
+  const [logo, setLogo] = useState(null);
+  const [portfolioImages, setPortfolioImages] = useState([]);
+  const [skills, setSkills] = useState([]);
 
-  const triggerFileSelect = () => fileInputRef.current.click();
+  const [initialSkillIds, setInitialSkillIds] = useState([]);
+  const [hasSynced, setHasSynced] = useState(false);
 
-  return (
-    <div className="flex items-center space-x-4">
-      <div
-        className={`flex-shrink-0 bg-gray-100 border-2 border-dashed rounded-${
-          shape === "circle" ? "full" : "lg"
-        } w-24 h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors`}
-        onClick={triggerFileSelect}
-      >
-        {preview ? (
-          <Image
-            src={preview}
-            alt="Preview"
-            width={500}
-            height={500}
-            className={`w-full h-full object-cover rounded-${
-              shape === "circle" ? "full" : "lg"
-            }`}
-          />
-        ) : (
-          <div className="text-center">
-            <Icon className="mx-auto h-8 w-8 text-gray-400" />
-          </div>
-        )}
-      </div>
-      <div className="flex-grow">
-        <h3 className="text-md font-bold text-gray-800">{title}</h3>
-        <p className="text-sm text-gray-500 mb-2">Click icon to upload</p>
-        <button
-          type="button"
-          onClick={triggerFileSelect}
-          className="text-sm font-semibold text-[#b5734c] hover:underline"
-        >
-          {preview ? "Change Photo" : "Upload Photo"}
-        </button>
-      </div>
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept="image/png, image/jpeg"
-        onChange={handleFileChange}
-      />
-    </div>
-  );
-};
+  const { data: profile, isLoading: loadingProfile } = useQuery({
+    queryKey: ["braiderProfile"],
+    queryFn: () =>
+      apiController({
+        method: "GET",
+        url: "/braiders/profile/",
+        requiresAuth: true,
+        token: session?.accessToken,
+      }).then((res) => res.data),
+    enabled: !!session?.accessToken,
+  });
 
-export default function PortfolioView({ onStepComplete, onBack }) {
-  // State for all form fields
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [businessLogo, setBusinessLogo] = useState(null);
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [workPhotos, setWorkPhotos] = useState([]);
-  const [workPhotoPreviews, setWorkPhotoPreviews] = useState([]);
-  const [isSkillsOpen, setIsSkillsOpen] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
+  const { data: serverImages, isLoading: loadingImages } = useQuery({
+    queryKey: ["portfolioImages"],
+    queryFn: () =>
+      apiController({
+        method: "GET",
+        url: "/braiders/portfolio-images/",
+        requiresAuth: true,
+        token: session?.accessToken,
+      }).then((res) => res.data),
+    enabled: !!session?.accessToken,
+  });
 
-  const dropdownRef = useRef(null);
+  const isLoading = loadingProfile || loadingImages;
 
-  // Form validation
   useEffect(() => {
-    const isValid = profilePicture !== null && workPhotos.length > 0;
-    setIsFormValid(isValid);
-  }, [profilePicture, workPhotos]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsSkillsOpen(false);
+    if (!isLoading && profile && !hasSynced) {
+      if (profile.business_logo_url) {
+        setLogo(profile.business_logo_url);
       }
+
+      if (profile.skills) {
+        setSkills(profile.skills);
+        setInitialSkillIds(profile.skills.map((s) => s.id));
+      }
+
+      if (serverImages) {
+        setPortfolioImages(serverImages);
+      }
+
+      setHasSynced(true);
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdownRef]);
+  }, [isLoading, profile, serverImages, hasSynced]);
 
-  const handleWorkPhotosChange = (event) => {
-    const files = Array.from(event.target.files).slice(
-      0,
-      10 - workPhotos.length
-    ); // Limit to 10 total
-    if (files.length === 0) return;
+  const logoMutation = useMutation({
+    mutationFn: async (file) => {
+      const formData = new FormData();
+      formData.append("business_logo", file);
+      return apiController({
+        method: "PATCH",
+        url: "/braiders/logo/",
+        data: formData,
+        requiresAuth: true,
+        token: session.accessToken,
+      });
+    },
+    onSuccess: (data) => {
+      setLogo(data.business_logo_url);
+      toast.success("Logo updated!");
+      queryClient.invalidateQueries({ queryKey: ["braiderProfile"] });
+    },
+    onError: () => toast.error("Logo upload failed."),
+  });
 
-    setWorkPhotos((prev) => [...prev, ...files]);
-    const newPreviews = files.map((file) => URL.createObjectURL(file));
-    setWorkPhotoPreviews((prev) => [...prev, ...newPreviews]);
+  const portfolioUploadMutation = useMutation({
+    mutationFn: async (files) => {
+      const formData = new FormData();
+      Array.from(files).forEach((file, index) => {
+        formData.append(`images[${index}]`, file);
+      });
+      return apiController({
+        method: "POST",
+        url: "/braiders/portfolio/upload/",
+        data: formData,
+        requiresAuth: true,
+        token: session.accessToken,
+      });
+    },
+    onSuccess: (res) => {
+      const newImages = res.images.map((img) => ({
+        id: img.id,
+        image_url: img.url,
+      }));
+      setPortfolioImages((prev) => [...prev, ...newImages]);
+      toast.success(`${res.images.length} images uploaded!`);
+      queryClient.invalidateQueries({ queryKey: ["portfolioImages"] });
+    },
+    onError: () => toast.error("Portfolio upload failed."),
+  });
+
+  const portfolioDeleteMutation = useMutation({
+    mutationFn: async (imageId) => {
+      return apiController({
+        method: "DELETE",
+        url: `/braiders/portfolio-images/${imageId}/`,
+        requiresAuth: true,
+        token: session.accessToken,
+      });
+    },
+    onMutate: async (imageId) => {
+      const previousImages = portfolioImages;
+      setPortfolioImages((prev) => prev.filter((img) => img.id !== imageId));
+      return { previousImages };
+    },
+    onError: (err, imageId, context) => {
+      if (context?.previousImages) {
+        setPortfolioImages(context.previousImages);
+      }
+      toast.error("Failed to delete image.");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["portfolioImages"] });
+    },
+  });
+
+  const saveSkillsMutation = useMutation({
+    mutationFn: async () => {
+      const currentSkillIds = skills.map((s) => s.id);
+      return apiController({
+        method: "PATCH",
+        url: "/braiders/profile/skills/",
+        data: { skills: currentSkillIds },
+        requiresAuth: true,
+        token: session.accessToken,
+      });
+    },
+    onSuccess: () => {
+      toast.success("Profile saved!");
+      queryClient.invalidateQueries({ queryKey: ["braiderProfile"] });
+      router.push("/onboarding/payment");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to save changes.");
+    },
+  });
+
+  const handleLogoUpload = (file) => {
+    logoMutation.mutate(file);
   };
 
-  const removeWorkPhoto = (indexToRemove) => {
-    URL.revokeObjectURL(workPhotoPreviews[indexToRemove]);
-    setWorkPhotos((prev) => prev.filter((_, index) => index !== indexToRemove));
-    setWorkPhotoPreviews((prev) =>
-      prev.filter((_, index) => index !== indexToRemove)
-    );
+  const handlePortfolioUpload = (files) => {
+    portfolioUploadMutation.mutate(files);
   };
 
-  const toggleSkill = (skill) => {
-    if (selectedSkills.includes(skill)) {
-      setSelectedSkills((prev) => prev.filter((s) => s !== skill));
-    } else if (selectedSkills.length < 6) {
-      setSelectedSkills((prev) => [...prev, skill]);
-    } else {
-      alert("You can select up to 6 skills only.");
-    }
+  const handleRemovePortfolioImage = (imageId) => {
+    portfolioDeleteMutation.mutate(imageId);
   };
 
-  const handleContinue = () => {
-    if (!isFormValid) {
-      alert(
-        "Please upload a profile picture and at least one photo of your work."
-      );
+  const handleSaveAndContinue = () => {
+    const currentSkillIds = skills.map((s) => s.id);
+    const hasSkillsChanged =
+      JSON.stringify(currentSkillIds.sort()) !==
+      JSON.stringify([...initialSkillIds].sort());
+
+    if (!hasSkillsChanged) {
+      router.push("/onboarding/payment");
       return;
     }
-    const portfolioData = {
-      profilePicture: profilePicture ? profilePicture.name : null,
-      businessLogo: businessLogo ? businessLogo.name : null,
-      skills: selectedSkills,
-      workPhotos: workPhotos.map((file) => file.name),
-    };
-    onStepComplete(portfolioData);
+
+    saveSkillsMutation.mutate();
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pt-[80px] flex justify-center items-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#b5734c]"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-white pt-[80px] font-sans">
+    <>
       <ProgressBar currentStep={CURRENT_STEP} />
-      <div className="max-w-[700px] w-full mx-auto p-4 sm:p-8 lg:p-10">
-        <button
-          onClick={onBack}
-          className="absolute top-24 left-4 sm:left-8 flex items-center text-gray-700 hover:text-gray-900 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4 mr-1" /> Back
-        </button>
+      <div className="min-h-screen bg-gray-50 pt-[80px] pb-12">
+        <div className="max-w-3xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white p-6 sm:p-8 shadow-sm border border-gray-100 mt-6 space-y-8">
+            <div>
+              <button
+                onClick={() => router.push("/onboarding/services")}
+                className="group flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-4"
+              >
+                <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />{" "}
+                {tCommon("back")}
+              </button>
+              <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+              <p className="text-gray-600 mt-1">{t("subtitle")}</p>
+            </div>
 
-        <div className="mb-4 mt-12 sm:mt-0 text-left">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-            Build Your Portfolio
-          </h2>
-          <p className="text-base text-gray-600">
-            This information will be displayed on your public profile to attract
-            clients.
-          </p>
-        </div>
+            <hr className="border-gray-100" />
 
-        <hr className="mb-8 border-gray-200" />
-
-        <div className="space-y-8">
-          {/* --- Profile Picture & Logo Section --- */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <ImageUploader
-              title="Profile Picture*"
-              Icon={ImageIcon}
-              shape="circle"
-              onFileChange={setProfilePicture}
-            />
-            <ImageUploader
-              title="Business Logo"
-              Icon={Building}
-              shape="square"
-              onFileChange={setBusinessLogo}
-            />
-          </div>
-
-          {/* --- Skills Section --- */}
-          <div className="relative" ref={dropdownRef}>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              Skills (Select up to 6)
-            </label>
-            <button
-              type="button"
-              onClick={() => setIsSkillsOpen(!isSkillsOpen)}
-              className="w-full flex justify-between items-center p-3 border border-gray-300 bg-white text-left"
-            >
-              <span className="text-gray-900">
-                {selectedSkills.length > 0
-                  ? `${selectedSkills.length} skills selected`
-                  : "Select your skills"}
-              </span>
-              <ChevronDown
-                className={`w-5 h-5 text-gray-500 transition-transform ${
-                  isSkillsOpen ? "transform rotate-180" : ""
-                }`}
+            <section>
+              <ImageUploader
+                label={t("logoSection")}
+                description={t("logoDesc")}
+                images={logo ? [{ id: "logo", image_url: logo }] : []}
+                onUpload={handleLogoUpload}
+                onRemove={() => setLogo(null)}
+                isLoading={logoMutation.isPending}
+                multiple={false}
               />
-            </button>
-            {isSkillsOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 shadow-lg max-h-60 overflow-y-auto">
-                {allSkills.map((skill) => (
-                  <div
-                    key={skill}
-                    onClick={() => toggleSkill(skill)}
-                    className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50"
-                  >
-                    <span className="text-black">{skill}</span>
-                    {selectedSkills.includes(skill) && (
-                      <Check className="w-5 h-5 text-[#b5734c]" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-            {/* Selected skills tags */}
-            <div className="flex flex-wrap gap-2 mt-3">
-              {selectedSkills.map((skill) => (
-                <div
-                  key={skill}
-                  className="flex items-center bg-orange-100 text-orange-800 text-sm font-medium px-2.5 py-1 rounded-full"
-                >
-                  {skill}
-                  <button
-                    onClick={() => toggleSkill(skill)}
-                    className="ml-2 text-orange-600 hover:text-orange-800"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
+            </section>
+
+            <hr className="border-gray-100" />
+            <section>
+              <h3 className="font-semibold text-gray-900 mb-1">
+                {t("skillsSection")}
+              </h3>
+              <p className="text-sm text-gray-500 mb-4">{t("skillsDesc")}</p>
+              <SkillSelector selectedSkills={skills} onChange={setSkills} />
+            </section>
+
+            <hr className="border-gray-100" />
+
+            <section>
+              <ImageUploader
+                label={t("portfolioSection")}
+                description={t("portfolioDesc")}
+                images={portfolioImages}
+                onUpload={handlePortfolioUpload}
+                onRemove={handleRemovePortfolioImage}
+                isLoading={portfolioUploadMutation.isPending}
+                multiple={true}
+              />
+            </section>
+
+            <div className="flex justify-end pt-4">
+              <Button
+                onClick={handleSaveAndContinue}
+                isLoading={saveSkillsMutation.isPending}
+                className="!w-auto px-12 shadow-lg shadow-orange-900/10"
+              >
+                {t("saveAndContinue")}
+              </Button>
             </div>
           </div>
-
-          {/* --- Previous Work Photos --- */}
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              Photos of Previous Work*
-            </label>
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50 hover:bg-gray-100">
-              <UploadCloud className="w-8 h-8 mb-2 text-gray-400" />
-              <p className="text-sm text-gray-500">
-                <span className="font-semibold">Click to upload</span> (up to 10
-                images)
-              </p>
-              <input
-                type="file"
-                className="hidden"
-                multiple
-                accept="image/*"
-                onChange={handleWorkPhotosChange}
-              />
-            </label>
-            {/* Previews */}
-            {workPhotoPreviews.length > 0 && (
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-4">
-                {workPhotoPreviews.map((preview, index) => (
-                  <div key={index} className="relative group">
-                    <Image
-                      src={preview}
-                      alt={`Work sample ${index + 1}`}
-                      width={500}
-                      height={500}
-                      className="w-full h-28 object-cover rounded-lg"
-                    />
-                    <button
-                      onClick={() => removeWorkPhoto(index)}
-                      className="absolute top-1 right-1 bg-black bg-opacity-60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
-
-        <button
-          onClick={handleContinue}
-          disabled={!isFormValid}
-          className={`w-full py-3 mt-10 font-bold text-medium shadow-md transition ${
-            isFormValid
-              ? "bg-[#b5734c] text-white hover:bg-[#c2825d]"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-        >
-          Finish Onboarding
-        </button>
       </div>
-    </div>
+    </>
   );
 }

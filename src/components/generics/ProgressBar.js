@@ -1,69 +1,94 @@
 "use client";
 
 import React from "react";
-
-const steps = [
-  "Business Information",
-  "Identity Verification",
-  "Services",
-  "Portfolio",
-  "Payment",
-];
+import { Link } from "@/navigation";
+import { useTranslations } from "next-intl";
+import { Check } from "lucide-react";
 
 const Logo = () => (
-  // Logo styling: fixed position, large orange font
-  <div className="text-[28px] font-bold text-[#d3986a] absolute left-4 lg:left-10 top-1/2 -translate-y-1/2">
-    afrB
-  </div>
-);
-
-// Component to render the step navigation
-const Steps = ({ currentStep }) => (
-  <div className="flex justify-center items-center flex-wrap max-w-4xl w-full px-4 sm:px-6">
-    {steps.map((step, index) => {
-      const stepNumber = index + 1;
-      const isActive = stepNumber === currentStep;
-      const isCompleted = stepNumber < currentStep;
-
-      // Determine text and circle styling
-      const textStyle =
-        isActive || isCompleted ? "font-bold text-gray-900" : "text-gray-500";
-      const circleBg = isActive
-        ? "bg-[#d3986a] text-white"
-        : "bg-transparent text-gray-500 border border-gray-400";
-
-      return (
-        <React.Fragment key={step}>
-          <div
-            className={`flex items-center whitespace-nowrap text-sm ${textStyle} mx-1`}
-          >
-            {/* Step Number Circle */}
-            <span
-              className={`w-[18px] h-[18px] rounded-full flex justify-center items-center mr-2 text-[10px] font-bold ${circleBg}`}
-            >
-              {stepNumber}
-            </span>
-            {step}
-          </div>
-
-          {/* Arrow Separator (not after the last step) */}
-          {index < steps.length - 1 && (
-            <div className="text-gray-400 mx-2 text-sm hidden sm:block">
-              {">"}
-            </div>
-          )}
-        </React.Fragment>
-      );
-    })}
+  <div className="hidden lg:block absolute left-10 top-1/2 -translate-y-1/2">
+    <span className="text-2xl font-bold text-[#b5734c]">AC</span>
   </div>
 );
 
 export default function ProgressBar({ currentStep = 1 }) {
+  const t = useTranslations("ProgressBar");
+
+  const steps = [
+    { label: t("businessInfo"), path: "/onboarding/business-info" },
+    { label: t("identity"), path: "/onboarding/identity" },
+    { label: t("services"), path: "/onboarding/services" },
+    { label: t("portfolio"), path: "/onboarding/portfolio" },
+    { label: t("payment"), path: "/onboarding/payment" },
+  ];
+
   return (
-    // Header Wrapper: Fixed position, white background, shadow
-    <div className="fixed top-0 left-0 w-full z-10 flex items-center justify-center py-5 border-b border-gray-200 bg-white shadow-sm">
-      <Logo />
-      <Steps currentStep={currentStep} />
+    <div className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-100 shadow-sm h-[80px]">
+      <div className="relative w-full h-full flex items-center justify-center px-4">
+        <Logo />
+
+        <nav className="w-full max-w-5xl overflow-x-auto no-scrollbar flex items-center lg:justify-center">
+          <div className="flex items-center space-x-2 sm:space-x-4 min-w-max px-2">
+            {steps.map((step, index) => {
+              const stepNumber = index + 1;
+              const isActive = stepNumber === currentStep;
+              const isCompleted = stepNumber < currentStep;
+
+              return (
+                <React.Fragment key={step.path}>
+                  <Link
+                    href={step.path}
+                    className={`
+                      group flex items-center space-x-2 py-2 px-2 transition-all duration-200
+                      ${isActive ? "bg-orange-50" : "hover:bg-gray-50"}
+                    `}
+                  >
+                    <div
+                      className={`
+                        relative flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all duration-300 border-2
+                        ${
+                          isCompleted
+                            ? "bg-[#b5734c] border-[#b5734c] text-white"
+                            : isActive
+                            ? "border-[#b5734c] text-[#b5734c] bg-white"
+                            : "border-gray-200 text-gray-400 bg-white group-hover:border-gray-300"
+                        }
+                      `}
+                    >
+                      {isCompleted ? (
+                        <Check size={14} strokeWidth={3} />
+                      ) : (
+                        <span>{stepNumber}</span>
+                      )}
+                    </div>
+
+                    <span
+                      className={`
+                        whitespace-nowrap text-sm font-medium transition-colors duration-200
+                        ${
+                          isActive || isCompleted
+                            ? "text-gray-900"
+                            : "text-gray-500 group-hover:text-gray-700"
+                        }
+                      `}
+                    >
+                      {step.label}
+                    </span>
+                  </Link>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`
+                        hidden sm:block h-[2px] w-8 rounded-full mx-2
+                        ${isCompleted ? "bg-[#b5734c]" : "bg-gray-200"}
+                      `}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </nav>
+      </div>
     </div>
   );
 }

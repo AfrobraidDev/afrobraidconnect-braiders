@@ -33,15 +33,14 @@ export const authOptions = {
           });
 
           if (userFromApi) {
-            // ✅ Return all necessary fields from your Django API
             return {
               id: userFromApi.id,
               email: userFromApi.email,
               name: `${userFromApi.first_name} ${userFromApi.last_name}`,
               accessToken: userFromApi.access_token,
               refreshToken: userFromApi.refresh_token,
-              role: userFromApi.role, // Add this
-              braiderProfile: userFromApi.braider_profile, // Add this
+              role: userFromApi.role,
+              braiderProfile: userFromApi.braider_profile,
             };
           }
           return null;
@@ -66,7 +65,6 @@ export const authOptions = {
           });
 
           if (data.access) {
-            // ✅ Attach all necessary data to the user object
             user.accessToken = data.access;
             user.refreshToken = data.refresh;
             user.id = data.id;
@@ -86,7 +84,6 @@ export const authOptions = {
       return false;
     },
     async jwt({ token, user }) {
-      // This is called after signIn. Persist all the data to the token.
       if (user) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
@@ -97,7 +94,6 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }) {
-      // This makes the data available to your frontend components.
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       session.user.id = token.id;

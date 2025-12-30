@@ -1,22 +1,57 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "@/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, Lock, Mail } from "lucide-react";
+import { Lock, Mail, Globe, ChevronUp, Check } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import Input from "../generics/ui/Input";
+import Button from "../generics/ui/Button";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function LoginView({ onBack }) {
+  const t = useTranslations("Auth");
+
+  const currentLocale = useLocale();
+
   const router = useRouter();
+  const pathname = usePathname();
+
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const langMenuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+        setIsLangMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const languages = [
+    { code: "en", label: "English" },
+    { code: "de", label: "Deutsch" },
+    { code: "fr", label: "Français" },
+  ];
+
+  const handleLanguageChange = (newLocale) => {
+    router.replace(pathname, { locale: newLocale });
+    setIsLangMenuOpen(false);
+  };
+
   const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/onboarding/business-info" });
+    signIn("google", {
+      callbackUrl: `/${currentLocale}/onboarding/business-info`,
+    });
   };
 
   const handleCredentialsSignIn = async (e) => {
@@ -41,28 +76,12 @@ export default function LoginView({ onBack }) {
 
   return (
     <div className="min-h-screen flex bg-white">
-      {/* Left Content Panel */}
       <div className="w-full md:w-1/2 flex flex-col justify-between p-6 sm:p-10 lg:p-16">
-        {/* Back Button */}
-        {/* <header className="mb-12 relative">
-          <button
-            onClick={onBack}
-            className="absolute -top-4 -left-4 sm:top-0 sm:left-0 flex items-center text-gray-700 hover:text-gray-900 transition-colors duration-150"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        </header> */}
-
-        {/* Main Content Form */}
-        <main className="flex-grow flex flex-col justify-center max-w-md mx-auto py-10">
+        <main className="flex-grow flex flex-col justify-center max-w-md mx-auto py-10 w-full">
           <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900 mb-2">
-            Afro Connect for Braiders
+            {t("loginTitle")}
           </h1>
-          <p className="text-base text-gray-600 mb-8">
-            Create an account or log in to book and manage your appointments.
-          </p>
-
-          {/* Email Form */}
+          <p className="text-base text-gray-600 mb-8">{t("loginSubtitle")}</p>
           <form onSubmit={handleCredentialsSignIn} className="space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -72,19 +91,13 @@ export default function LoginView({ onBack }) {
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-sm font-semibold text-gray-800">
                   <Mail className="w-5 h-5 text-gray-400" />
                 </div>
-                <input
+                <Input
                   type="email"
-                  id="email"
-                  name="email"
-                  autoComplete="email-address"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                  }}
+                  icon={Mail}
                   placeholder="hello@teni.com"
-                  className={`w-full py-3 pl-10 pr-3 border ${
-                    emailError ? "border-red-500" : "border-gray-300"
-                  } focus:ring-[#c2825d] focus:border-[#b5734c] outline-none text-gray-900`}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  error={emailError}
                   required
                 />
               </div>
@@ -97,16 +110,13 @@ export default function LoginView({ onBack }) {
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-sm font-semibold text-gray-800">
                   <Lock className="w-5 h-5 text-gray-400" />
                 </div>
-                <input
-                  id="password"
-                  name="password"
+                <Input
                   type="password"
-                  autoComplete="current-password"
-                  required
+                  icon={Lock}
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full py-3 pl-10 pr-3 border border-gray-300 focus:ring-[#c2825d] focus:border-[#b5734c] outline-none text-gray-900"
-                  placeholder="Password"
+                  required
                 />
               </div>
 
@@ -115,7 +125,7 @@ export default function LoginView({ onBack }) {
                   href="/forgot-password"
                   className="font-medium text-[#b5734c] hover:underline"
                 >
-                  Forgot Password?
+                  {t("forgotPassword")}
                 </Link>
               </div>
             </div>
@@ -127,36 +137,34 @@ export default function LoginView({ onBack }) {
               disabled={isLoading}
               className="w-full px-4 py-3 font-semibold text-white bg-[#b5734c] hover:bg-[#b47550] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b47550] disabled:bg-[#b5734c]"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? t("signingIn") : t("signIn")}
             </button>
           </form>
-
-          {/* OR Separator */}
           <div className="flex items-center my-6">
             <hr className="flex-grow border-gray-200" />
-            <span className="px-4 text-sm text-gray-500">or</span>
+            <span className="px-4 text-sm text-gray-500">{t("or")}</span>
             <hr className="flex-grow border-gray-200" />
           </div>
-
-          {/* Google Sign-in Button */}
-          <button
+          <Button
+            variant="outline"
             onClick={handleGoogleSignIn}
-            className="flex items-center justify-center w-full py-3 px-4 border border-gray-300 shadow-sm text-gray-700 font-semibold hover:bg-gray-50 transition duration-150 mb-6"
+            icon={FcGoogle}
+            className="mt-6"
           >
-            <FcGoogle className="w-5 h-5 mr-2" />
-            Continue with Google
-          </button>
+            {t("googleSignIn")}
+          </Button>
 
           <p className="text-center text-sm text-gray-600 mt-8">
-            Don&apos;t have an account?{" "}
+            {t("signUpPrompt")}{" "}
             <Link
               href="/register"
               className="text-[#b5734c] font-medium hover:underline ml-1"
             >
-              Sign Up as a Professional
+              {t("signUpLink")}
             </Link>
           </p>
-          <p className="text-center text-sm text-gray-600 mt-8">
+
+          <p className="text-center text-sm text-gray-600 mt-2">
             Haven&apos;t verified my account?{" "}
             <Link
               href="/resend-verification"
@@ -166,60 +174,56 @@ export default function LoginView({ onBack }) {
             </Link>
           </p>
         </main>
-
-        {/* Footer/Contact Section */}
-        <footer className="mt-12 flex justify-between items-center text-xs text-gray-500">
+        <footer className="mt-12 flex justify-between items-center text-xs text-gray-500 relative">
           <div className="flex items-center space-x-1">
-            <svg
-              className="w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0 1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
+            <Mail className="w-4 h-4" />
             <span>support@afrobraidconnect.com</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <svg
-              className="w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <div className="relative" ref={langMenuRef}>
+            <button
+              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+              className="flex items-center space-x-2 hover:text-gray-900 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50"
             >
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10zM2.5 9h19M2.5 15h19"></path>
-            </svg>
-            <span className="font-bold">ENG</span>
-            <svg
-              className="w-3 h-3"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
+              <Globe className="w-4 h-4" />
+              <span className="font-bold uppercase">{currentLocale}</span>
+              <ChevronUp
+                className={`w-3 h-3 transition-transform duration-200 ${
+                  isLangMenuOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            {isLangMenuOpen && (
+              <div className="absolute bottom-full right-0 mb-2 w-40 bg-white border border-gray-100 rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                <div className="py-1">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleLanguageChange(lang.code)}
+                      className={`
+                        w-full text-left px-4 py-3 text-sm flex items-center justify-between hover:bg-gray-50 transition-colors
+                        ${
+                          currentLocale === lang.code
+                            ? "text-[#b5734c] font-semibold bg-orange-50/50"
+                            : "text-gray-700"
+                        }
+                      `}
+                    >
+                      <span>{lang.label}</span>
+                      {currentLocale === lang.code && (
+                        <Check className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </footer>
       </div>
 
-      {/* Right Image Panel (Hidden on mobile) */}
       <div className="relative w-1/2 bg-gray-200 hidden md:block">
         <Image
-          src="/images/hero.png" // Using the hero image path
+          src="/images/hero.png"
           alt="Customer booking appointment"
           fill
           priority
