@@ -125,5 +125,30 @@
     "back": "Zurück",
     "skip": "Ich mache das später",
     "skipWarning": "Hinweis: Sie sind für Kunden erst sichtbar, wenn Sie diesen Schritt abschließen."
+  },
+  "Availability": {
+    "title": "Verfügbarkeit",
+    "subtitle": "Legen Sie Ihren wöchentlichen Zeitplan fest.",
+    "btnCopy": "Mo. auf alle kopieren",
+    "btnSave": "Änderungen speichern",
+    "btnAddSlot": "Pause oder Schicht hinzufügen",
+    "unavailable": "Nicht verfügbar",
+    "invalidTime": "Ungültige Zeit",
+    "infoTitle": "Hinweis zu Ihrer Verfügbarkeit",
+    "infoDesc": "Kunden können Termine nur innerhalb dieser Zeiten buchen. Wenn Sie bestimmte Tage blockieren müssen (z. B. Feiertage), nutzen Sie bitte die Kalenderansicht.",
+    "toastSaveSuccess": "Verfügbarkeit erfolgreich gespeichert!",
+    "toastSaveError": "Speichern des Zeitplans fehlgeschlagen.",
+    "toastCopyError": "Richten Sie zuerst den Montag ein!",
+    "toastCopySuccess": "Montagsplan auf alle Tage kopiert!",
+    "validationError": "Die Startzeit muss vor der Endzeit liegen.",
+    "days": {
+      "Monday": "Montag",
+      "Tuesday": "Dienstag",
+      "Wednesday": "Mittwoch",
+      "Thursday": "Donnerstag",
+      "Friday": "Freitag",
+      "Saturday": "Samstag",
+      "Sunday": "Sonntag"
+    }
   }
 }

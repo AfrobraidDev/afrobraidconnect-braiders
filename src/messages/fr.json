@@ -125,5 +125,30 @@
     "back": "Retour",
     "skip": "Je ferai ça plus tard",
     "skipWarning": "Remarque : Vous ne serez visible par les clients qu'une fois cette étape terminée."
+  },
+  "Availability": {
+    "title": "Disponibilité",
+    "subtitle": "Définissez votre emploi du temps hebdomadaire.",
+    "btnCopy": "Copier Lun. sur tous",
+    "btnSave": "Enregistrer",
+    "btnAddSlot": "Ajouter une pause ou un créneau",
+    "unavailable": "Indisponible",
+    "invalidTime": "Heure invalide",
+    "infoTitle": "Remarque sur votre disponibilité",
+    "infoDesc": "Les clients ne peuvent réserver qu'à l'intérieur de ces horaires. Si vous devez bloquer des dates précises (ex. vacances), veuillez utiliser la vue Calendrier.",
+    "toastSaveSuccess": "Disponibilité enregistrée avec succès !",
+    "toastSaveError": "Échec de l'enregistrement de l'horaire.",
+    "toastCopyError": "Configurez d'abord le lundi !",
+    "toastCopySuccess": "Horaire du lundi copié sur tous les jours !",
+    "validationError": "L'heure de début doit être antérieure à l'heure de fin.",
+    "days": {
+      "Monday": "Lundi",
+      "Tuesday": "Mardi",
+      "Wednesday": "Mercredi",
+      "Thursday": "Jeudi",
+      "Friday": "Vendredi",
+      "Saturday": "Samedi",
+      "Sunday": "Dimanche"
+    }
   }
 }

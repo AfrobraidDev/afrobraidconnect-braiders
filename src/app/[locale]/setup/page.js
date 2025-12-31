@@ -1,14 +1,7 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import SetUpView from '@/components/setup/SetUp';
+import SetUpView from "@/components/setup/SetUp";
 
-
-export default function SetUpPage() { 
-
-    
-    return (
-        <SetUpView />
-    );
+export default function SetUpPage() {
+  return <SetUpView />;
 }
-
