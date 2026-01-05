@@ -14,7 +14,7 @@ export default function SupportScreen() {
   };
 
   return (
-    <main className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
+    <main className="p-4 md:p-8 max-w-8xl mx-auto space-y-8">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
           Support & Help Center
