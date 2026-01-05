@@ -13,8 +13,10 @@ import {
   LifeBuoy,
   Menu,
   X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
-import { Link, usePathname } from "@/navigation";
+import { Link, usePathname, useRouter } from "@/navigation";
 
 const NavLink = ({ href, icon: Icon, children }) => {
   const pathname = usePathname();
@@ -47,55 +49,99 @@ const NavLink = ({ href, icon: Icon, children }) => {
   );
 };
 
-const SidebarContent = () => (
-  <div className="flex flex-col justify-between h-full p-4">
-    <div>
-      <div className="flex items-center mb-10 pl-2">
-        <Link href="/dashboard">
-          <Image
-            src="/images/setuplogo.png"
-            alt="Logo"
-            width={150}
-            height={40}
-            className="h-10 w-auto object-contain"
-            priority
-          />
-        </Link>
-      </div>
-      <ul className="space-y-2">
-        <NavLink href="/dashboard" icon={LayoutDashboard}>
-          Dashboard
-        </NavLink>
-        <NavLink href="/dashboard/bookings" icon={CalendarDays}>
-          Bookings
-        </NavLink>
-        <NavLink href="/dashboard/clients" icon={Users}>
-          Clients
-        </NavLink>
-        <NavLink href="/dashboard/earnings" icon={Wallet}>
-          Earnings
-        </NavLink>
-        <NavLink href="/dashboard/portfolio" icon={GalleryVertical}>
-          Portfolio
-        </NavLink>
-      </ul>
-    </div>
+const SidebarContent = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isLangOpen, setIsLangOpen] = useState(false);
 
-    <div>
-      <ul className="space-y-2">
-        <NavLink href="/dashboard/settings" icon={Settings}>
-          Settings
-        </NavLink>
-        <NavLink href="/dashboard/language" icon={Globe}>
-          Language
-        </NavLink>
-        <NavLink href="/dashboard/support" icon={LifeBuoy}>
-          Support
-        </NavLink>
-      </ul>
+  const switchLanguage = (locale) => {
+    router.replace(pathname, { locale });
+    setIsLangOpen(false);
+  };
+
+  const languages = [
+    { code: "en", label: "English (EN)" },
+    { code: "de", label: "Deutsch (DE)" },
+    { code: "fr", label: "Français (FR)" },
+  ];
+
+  return (
+    <div className="flex flex-col justify-between h-full p-4">
+      <div>
+        <div className="flex items-center mb-10 pl-2">
+          <Link href="/dashboard">
+            <Image
+              src="/images/setuplogo.png"
+              alt="Logo"
+              width={150}
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
+            />
+          </Link>
+        </div>
+        <ul className="space-y-2">
+          <NavLink href="/dashboard" icon={LayoutDashboard}>
+            Dashboard
+          </NavLink>
+          <NavLink href="/dashboard/bookings" icon={CalendarDays}>
+            Bookings
+          </NavLink>
+          <NavLink href="/dashboard/clients" icon={Users}>
+            Clients
+          </NavLink>
+          <NavLink href="/dashboard/earnings" icon={Wallet}>
+            Earnings
+          </NavLink>
+          <NavLink href="/dashboard/portfolio" icon={GalleryVertical}>
+            Portfolio
+          </NavLink>
+        </ul>
+      </div>
+
+      <div>
+        <ul className="space-y-2">
+          <NavLink href="/dashboard/settings" icon={Settings}>
+            Settings
+          </NavLink>
+
+          <li>
+            <button
+              onClick={() => setIsLangOpen(!isLangOpen)}
+              className={`flex items-center justify-between w-full p-3 rounded-lg transition-colors duration-200 group text-gray-600 hover:bg-gray-50 hover:text-gray-900 ${
+                isLangOpen ? "bg-gray-50" : ""
+              }`}
+            >
+              <div className="flex items-center">
+                <Globe className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+                <span className="ml-4 font-medium">Language</span>
+              </div>
+              {isLangOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+
+            {isLangOpen && (
+              <div className="mt-1 ml-12 space-y-1 border-l-2 border-gray-100 pl-2 animate-in slide-in-from-top-2 duration-200">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => switchLanguage(lang.code)}
+                    className="block w-full text-left px-3 py-2 text-sm text-gray-500 hover:text-[#b5734c] hover:bg-orange-50 rounded-md transition-colors"
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </li>
+
+          <NavLink href="/dashboard/support" icon={LifeBuoy}>
+            Support
+          </NavLink>
+        </ul>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const BraiderSidebar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
