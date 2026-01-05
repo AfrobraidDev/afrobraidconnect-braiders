@@ -1,76 +1,147 @@
-import React from 'react';
-import { CreditCard, CalendarCheck, Lock, Phone } from 'lucide-react';
-import { HelpCard } from '../generics/support/HelpCard';
-import { FaqAccordion } from '../generics/support/Faq';
-import { LiveChatButton } from '../generics/support/LiveChat';
+"use client";
 
-export const SupportScreen = () => {
+import React, { useState } from "react";
+import { Mail, Copy, Check, HelpCircle, HeartHandshake } from "lucide-react";
+
+export default function SupportScreen() {
+  const [copied, setCopied] = useState(false);
+  const supportEmail = "nyquist@afrobraidconnect.de";
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(supportEmail);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <>
-      <main className="p-4 md:p-8">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-gray-800">Support Center</h1>
-          <p className="text-gray-500 mt-2 max-w-2xl mx-auto">
-            Need help? We’re here to assist you. Find answers to common questions or get in touch with our team.
-          </p>
-        </div>
+    <main className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900">
+          Support & Help Center
+        </h1>
+        <p className="text-gray-500 text-lg">
+          We are here to help you manage and grow your business seamlessly.
+        </p>
+      </div>
 
-        {/* Quick Help Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <HelpCard icon={CreditCard} title="Payment Issues" description="Learn how payouts, deposits, and refunds work." />
-          <HelpCard icon={CalendarCheck} title="Booking Problems" description="Help with managing or editing appointments." />
-          <HelpCard icon={Lock} title="Account & Verification" description="Resolve login, password, or ID verification issues." />
-          <HelpCard icon={Phone} title="Contact Support" description="Talk to our dedicated team directly for any issue." />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          <div className="bg-[#b5734c] text-white rounded-2xl p-8 shadow-lg relative overflow-hidden group">
+            <Mail className="absolute -bottom-6 -right-6 w-32 h-32 text-white/10 group-hover:scale-110 transition-transform duration-500" />
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Left Column: Contact Form */}
-          <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Send us a Message</h2>
-            <form className="space-y-4">
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Subject</label>
-                <select id="subject" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-theme-primary/50 focus:border-theme-primary">
-                  <option>Payment Issue</option>
-                  <option>Booking Problem</option>
-                  <option>Account Help</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
-                <textarea id="message" rows="5" placeholder="Please describe your issue in detail..." className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-theme-primary/50 focus:border-theme-primary"></textarea>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Attach File (Optional)</label>
-                <input type="file" className="mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-primary/10 file:text-theme-primary hover:file:bg-theme-primary/20"/>
-              </div>
-              <button type="submit" className="w-full bg-theme-primary text-white font-bold py-3 rounded-lg hover:bg-opacity-90 transition-all">
-                Submit Ticket
-              </button>
-            </form>
-          </div>
+            <h2 className="text-2xl font-bold mb-4 relative z-10">
+              Get in touch
+            </h2>
+            <p className="text-white/90 mb-8 relative z-10 leading-relaxed text-sm">
+              Have a question about your account, found a bug, or have an idea
+              for a new feature? Our team is ready to listen. Your success is
+              our priority.
+            </p>
 
-          {/* Right Column: FAQ and Contact Info */}
-          <div className="lg:col-span-1 space-y-8">
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <h3 className="text-lg font-bold text-gray-800 mb-2">Frequently Asked Questions</h3>
-              <FaqAccordion question="How do I change my password?" answer="You can change your password by going to the 'Settings' page and clicking on 'Security'. From there, you'll see an option to update your password." />
-              <FaqAccordion question="When do I receive my payouts?" answer="Payouts are processed automatically every Friday for the previous week's completed bookings. It may take 1-2 business days for the funds to appear in your bank account." />
-              <FaqAccordion question="Can I cancel a booking?" answer="Yes, you can cancel a booking from the 'Bookings' page. Please be aware of our cancellation policy, as last-minute cancellations may affect your rating." />
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm text-center">
-               <h3 className="text-lg font-bold text-gray-800 mb-2">Direct Contact</h3>
-               <p className="text-gray-600">For urgent issues, you can reach us at:</p>
-               <a href="mailto:support@afrobraidconnect.com" className="font-semibold text-theme-primary hover:underline">support@afrobraidconnect.com</a>
+            <div className="relative z-10 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-xs text-white/60 uppercase tracking-wider font-semibold mb-1">
+                  Support Email
+                </p>
+                <p className="font-mono text-sm truncate select-all">
+                  {supportEmail}
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopyEmail}
+                  className="p-2.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white"
+                  title="Copy Email"
+                >
+                  {copied ? <Check size={20} /> : <Copy size={20} />}
+                </button>
+                <a
+                  href={`mailto:${supportEmail}`}
+                  className="p-2.5 rounded-lg bg-white text-[#b5734c] hover:bg-gray-100 transition-colors font-bold flex items-center gap-2"
+                >
+                  <SendIcon size={20} />
+                  <span className="hidden sm:inline">Send Mail</span>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
 
-      <LiveChatButton />
-    </>
+          {/* Promise Card */}
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-start gap-4">
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-full shrink-0">
+              <HeartHandshake size={24} />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 mb-1">
+                Our Commitment to You
+              </h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                At AfroBraidConnect, we value your partnership. We strive to
+                respond to all inquiries within 24 hours. Your feedback helps us
+                build the best platform for braiders worldwide.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+              <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <HelpCircle size={20} className="text-gray-400" />
+                Frequently Asked Questions
+              </h3>
+            </div>
+
+            <div className="divide-y divide-gray-100">
+              <FaqItem
+                question="How do I update my availability?"
+                answer="Go to your Dashboard and click on 'Settings' then 'Availability'. You can set your weekly hours and block out specific dates there."
+              />
+              <FaqItem
+                question="When do I get paid?"
+                answer="Payouts are processed automatically every week for all completed bookings. Check the 'Earnings' tab for your payout schedule."
+              />
+              <FaqItem
+                question="Can I decline a booking?"
+                answer="Yes. When a new request comes in, you have the option to Accept or Decline it from the 'Bookings' page."
+              />
+              <FaqItem
+                question="How do I contact a client?"
+                answer="Once a booking is confirmed, you can use the Chat feature in your Dashboard to message the client directly."
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   );
-};
+}
+
+const FaqItem = ({ question, answer }) => (
+  <div className="p-5 hover:bg-gray-50 transition-colors group">
+    <h4 className="font-semibold text-sm text-gray-800 mb-2 group-hover:text-[#b5734c] transition-colors">
+      {question}
+    </h4>
+    <p className="text-sm text-gray-500 leading-relaxed">{answer}</p>
+  </div>
+);
+
+const SendIcon = ({ size = 24, className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <line x1="22" y1="2" x2="11" y2="13"></line>
+    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+  </svg>
+);
