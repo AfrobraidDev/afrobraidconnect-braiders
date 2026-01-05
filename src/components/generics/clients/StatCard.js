@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const ClientStatCard = ({ icon: Icon, title, value, colorClass }) => (
   <div className="bg-white p-4 rounded-xl shadow-sm flex items-start gap-4">
