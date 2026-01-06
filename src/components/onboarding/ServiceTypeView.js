@@ -429,7 +429,7 @@ export default function ServiceTypeView() {
                                 <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block tracking-wide">
                                   {t("cityLabel")}
                                 </label>
-                                <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm font-medium">
+                                <div className="px-4 py-3 bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium">
                                   {locations[type.id]?.city || "—"}
                                 </div>
                               </div>
@@ -437,14 +437,14 @@ export default function ServiceTypeView() {
                                 <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block tracking-wide">
                                   {t("countryLabel")}
                                 </label>
-                                <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm font-medium">
+                                <div className="px-4 py-3 bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium">
                                   {locations[type.id]?.country || "—"}
                                 </div>
                               </div>
                             </div>
 
                             <div
-                              className="bg-gray-50 p-4 rounded-xl border border-gray-200"
+                              className="bg-gray-50 p-4 border border-gray-200"
                               onClick={() => handleFocus(type.id)}
                             >
                               <div className="flex justify-between items-center mb-2">
@@ -459,7 +459,7 @@ export default function ServiceTypeView() {
                               <input
                                 type="range"
                                 min="1"
-                                max="100"
+                                max="500"
                                 step="1"
                                 value={locations[type.id]?.radius_km || 30}
                                 onChange={(e) =>
