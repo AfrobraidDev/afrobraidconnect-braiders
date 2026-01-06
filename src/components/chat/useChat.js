@@ -1,5 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { apiController } from "@/utils/apiController";
 
 const getWebSocketUrl = (endpoint, params = {}) => {
@@ -12,47 +16,64 @@ const getWebSocketUrl = (endpoint, params = {}) => {
 };
 
 export const useChat = (bookingId, token, currentUserId) => {
-  const [messages, setMessages] = useState([]);
+  const [socketMessages, setSocketMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef(null);
+  const queryClient = useQueryClient();
 
-  // 1. Fetch History
-  const { data: historyData, isLoading } = useQuery({
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isHistoryLoading,
+  } = useInfiniteQuery({
     queryKey: ["chatHistory", bookingId],
-    queryFn: () =>
-      apiController({
+    queryFn: async ({ pageParam = 1 }) => {
+      const res = await apiController({
         method: "GET",
         url: `/chat/history/${bookingId}/`,
+        params: { page: pageParam },
         requiresAuth: true,
         token: token,
-      }),
+      });
+      return res.data;
+    },
+    getNextPageParam: (lastPage) => {
+      if (!lastPage?.next) return undefined;
+      const url = new URL(lastPage.next);
+      return url.searchParams.get("page");
+    },
     enabled: !!bookingId && !!token,
+    refetchOnWindowFocus: false,
   });
 
-  // 2. Sync History
-  useEffect(() => {
-    const results = historyData?.data?.results;
-    if (results && Array.isArray(results)) {
-      const chronological = [...results].reverse();
-      setMessages(chronological);
-    }
-  }, [historyData]);
+  const messages = useMemo(() => {
+    const historyPages = data?.pages?.flatMap((page) => page.results) || [];
 
-  // ✅ 3. Mark As Read Mutation
+    const historyChronological = [...historyPages].reverse();
+
+    const combined = [...historyChronological, ...socketMessages];
+
+    const uniqueMap = new Map();
+    combined.forEach((msg) => {
+      uniqueMap.set(msg.id, msg);
+    });
+
+    return Array.from(uniqueMap.values());
+  }, [data, socketMessages]);
+
   const markReadMutation = useMutation({
     mutationFn: async () => {
       return apiController({
         method: "POST",
-        url: `/chat/mark-read/${bookingId}/`, // Ensure trailing slash if Django requires it
+        url: `/chat/mark-read/${bookingId}/`,
         requiresAuth: true,
         token: token,
       });
     },
-    // We don't need to do anything on success here;
-    // the backend will send a WebSocket event to the *other* user.
   });
 
-  // 4. WebSocket Connection
   useEffect(() => {
     if (!bookingId || !token) return;
 
@@ -66,31 +87,31 @@ export const useChat = (bookingId, token, currentUserId) => {
       try {
         const data = JSON.parse(event.data);
 
-        // ✅ CASE A: Read Receipt Event
         if (data.type === "read_receipt") {
-          // If the *other* person read the chat, mark MY messages as read
-          if (data.reader_id !== currentUserId) {
-            setMessages((prev) =>
+          if (String(data.reader_id) !== String(currentUserId)) {
+            setSocketMessages((prev) =>
               prev.map((msg) => (msg.is_me ? { ...msg, is_read: true } : msg))
             );
+            queryClient.invalidateQueries(["chatHistory", bookingId]);
           }
           return;
         }
 
-        // ✅ CASE B: Incoming Message
-        if (currentUserId && data.sender_id === currentUserId) return; // Ignore echo
+        if (currentUserId && String(data.sender_id) === String(currentUserId)) {
+          return;
+        }
 
         const newMessage = {
-          id: Date.now(),
+          id: data.id || Date.now(),
           content: data.message,
           sender_name: data.sender_name,
           sender_id: data.sender_id,
           timestamp: new Date().toISOString(),
           is_me: false,
-          is_read: false, // Incoming messages are initially unread
+          is_read: false,
         };
 
-        setMessages((prev) => [...prev, newMessage]);
+        setSocketMessages((prev) => [...prev, newMessage]);
       } catch (e) {
         console.error("WS Parse Error", e);
       }
@@ -98,9 +119,8 @@ export const useChat = (bookingId, token, currentUserId) => {
 
     socket.onclose = () => setIsConnected(false);
     return () => socket.close();
-  }, [bookingId, token, currentUserId]);
+  }, [bookingId, token, currentUserId, queryClient]);
 
-  // 5. Send Message
   const sendMessage = useCallback((content) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ message: content }));
@@ -111,18 +131,21 @@ export const useChat = (bookingId, token, currentUserId) => {
         sender_name: "Me",
         timestamp: new Date().toISOString(),
         is_me: true,
-        is_sending: false,
-        is_read: false, // Default to grey ticks
+        is_sending: true,
+        is_read: false,
       };
-      setMessages((prev) => [...prev, optimisticMsg]);
+      setSocketMessages((prev) => [...prev, optimisticMsg]);
     }
   }, []);
 
   return {
     messages,
-    isLoading,
+    isLoading: isHistoryLoading,
     isConnected,
     sendMessage,
-    markAsRead: markReadMutation.mutate, // ✅ Expose the function
+    markAsRead: markReadMutation.mutate,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   };
 };

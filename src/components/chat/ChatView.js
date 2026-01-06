@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { useSession } from "next-auth/react";
 import {
   Send,
@@ -31,17 +31,25 @@ export default function ChatView({
   onClose,
 }) {
   const { data: session } = useSession();
+
   const bottomRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+  const topObserverRef = useRef(null);
 
   const [isMinimized, setIsMinimized] = useState(false);
   const [input, setInput] = useState("");
   const [isMobile, setIsMobile] = useState(false);
 
-  const { messages, isLoading, isConnected, sendMessage, markAsRead } = useChat(
-    bookingId,
-    session?.accessToken,
-    session?.user?.id
-  );
+  const {
+    messages,
+    isLoading,
+    isConnected,
+    sendMessage,
+    markAsRead,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useChat(bookingId, session?.accessToken, session?.user?.id);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -50,11 +58,70 @@ export default function ChatView({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useEffect(() => {
-    if (!isMinimized) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  const previousMessagesLength = useRef(messages.length);
+
+  useLayoutEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const isNewMessage = messages.length > previousMessagesLength.current;
+    const isHistoryLoad =
+      messages.length > previousMessagesLength.current && isFetchingNextPage;
+
+    if (
+      (isNewMessage && !isFetchingNextPage) ||
+      (messages.length > 0 && previousMessagesLength.current === 0)
+    ) {
+      if (!isMinimized) {
+        bottomRef.current?.scrollIntoView({ behavior: "auto" });
+      }
     }
-  }, [messages, isMinimized]);
+
+    previousMessagesLength.current = messages.length;
+  }, [messages, isMinimized, isFetchingNextPage]);
+
+  const previousScrollHeight = useRef(0);
+
+  useEffect(() => {
+    if (isFetchingNextPage && scrollContainerRef.current) {
+      previousScrollHeight.current = scrollContainerRef.current.scrollHeight;
+    }
+  }, [isFetchingNextPage]);
+
+  useLayoutEffect(() => {
+    if (
+      !isFetchingNextPage &&
+      previousScrollHeight.current > 0 &&
+      scrollContainerRef.current
+    ) {
+      const newScrollHeight = scrollContainerRef.current.scrollHeight;
+      const diff = newScrollHeight - previousScrollHeight.current;
+
+      if (diff > 0) {
+        scrollContainerRef.current.scrollTop += diff;
+        previousScrollHeight.current = 0;
+      }
+    }
+  }, [messages, isFetchingNextPage]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (topObserverRef.current) {
+      observer.observe(topObserverRef.current);
+    }
+
+    return () => {
+      if (topObserverRef.current) observer.unobserve(topObserverRef.current);
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
     if (!messages.length || !isConnected || isMinimized) return;
@@ -188,7 +255,19 @@ export default function ChatView({
       </div>
 
       <div className="flex flex-col flex-1 min-h-0 bg-white">
-        <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-[#f0f2f5] scrollbar-thin scrollbar-thumb-gray-300">
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto p-3 space-y-3 bg-[#f0f2f5] scrollbar-thin scrollbar-thumb-gray-300"
+        >
+          <div
+            ref={topObserverRef}
+            className="h-4 flex items-center justify-center w-full"
+          >
+            {isFetchingNextPage && (
+              <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+            )}
+          </div>
+
           {isLoading ? (
             <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-2">
               <Loader2 className="w-6 h-6 animate-spin text-[#b5734c]" />
@@ -196,51 +275,61 @@ export default function ChatView({
             </div>
           ) : (
             <>
-              <div className="text-center my-4">
-                <span className="text-[10px] font-medium text-gray-500">
-                  {format(new Date(), "MMMM d, yyyy")}
-                </span>
-              </div>
-              {messages.map((msg, index) => (
-                <div
-                  key={msg.id || index}
-                  className={`flex w-full ${
-                    msg.is_me ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`flex flex-col max-w-[75%] ${
-                      msg.is_me ? "items-end" : "items-start"
-                    }`}
-                  >
+              {messages.map((msg, index) => {
+                const showDate =
+                  index === 0 ||
+                  new Date(msg.timestamp).toDateString() !==
+                    new Date(messages[index - 1].timestamp).toDateString();
+
+                return (
+                  <React.Fragment key={msg.id || index}>
+                    {showDate && (
+                      <div className="text-center my-4">
+                        <span className="text-[10px] font-medium text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
+                          {format(new Date(msg.timestamp), "MMM d, yyyy")}
+                        </span>
+                      </div>
+                    )}
                     <div
-                      className={`px-3 py-2 text-[14px] shadow-sm relative group break-words ${
-                        msg.is_me
-                          ? "bg-[#b5734c] text-white rounded-2xl rounded-tr-sm"
-                          : "bg-white text-gray-900 border border-gray-200 rounded-2xl rounded-tl-sm"
+                      className={`flex w-full ${
+                        msg.is_me ? "justify-end" : "justify-start"
                       }`}
                     >
-                      {msg.content}
-                    </div>
-                    <div className="flex items-center gap-1 mt-0.5 px-1">
-                      <span className="text-[9px] text-gray-400">
-                        {msg.timestamp
-                          ? format(new Date(msg.timestamp), "h:mm a")
-                          : ""}
-                      </span>
-                      {msg.is_me && (
-                        <span
-                          className={
-                            msg.is_read ? "text-blue-500" : "text-gray-300"
-                          }
+                      <div
+                        className={`flex flex-col max-w-[75%] ${
+                          msg.is_me ? "items-end" : "items-start"
+                        }`}
+                      >
+                        <div
+                          className={`px-3 py-2 text-[14px] shadow-sm relative group break-words ${
+                            msg.is_me
+                              ? "bg-[#b5734c] text-white rounded-2xl rounded-tr-sm"
+                              : "bg-white text-gray-900 border border-gray-200 rounded-2xl rounded-tl-sm"
+                          }`}
                         >
-                          <CheckCheck size={12} />
-                        </span>
-                      )}
+                          {msg.content}
+                        </div>
+                        <div className="flex items-center gap-1 mt-0.5 px-1">
+                          <span className="text-[9px] text-gray-400">
+                            {msg.timestamp
+                              ? format(new Date(msg.timestamp), "h:mm a")
+                              : ""}
+                          </span>
+                          {msg.is_me && (
+                            <span
+                              className={
+                                msg.is_read ? "text-blue-500" : "text-gray-300"
+                              }
+                            >
+                              <CheckCheck size={12} />
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </React.Fragment>
+                );
+              })}
               <div ref={bottomRef} />
             </>
           )}
@@ -255,26 +344,14 @@ export default function ChatView({
             onSubmit={handleSend}
             className="flex items-end gap-1.5 bg-gray-100 p-1.5 rounded-[20px] focus-within:ring-2 focus-within:ring-[#b5734c]/20 transition-all"
           >
-            <button
-              type="button"
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-200"
-            >
-              <Paperclip size={18} />
-            </button>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Aa"
+              placeholder="Welcome to AfroBraid Connect!"
               disabled={!isConnected}
-              className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-1 placeholder:text-gray-500 min-w-0"
+              className="flex-1 bg-transparent border-none focus:border-none focus:outline-none focus:ring-0 text-sm py-2 px-1 placeholder:text-gray-500 min-w-0"
             />
-            <button
-              type="button"
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors hidden sm:block rounded-full hover:bg-gray-200"
-            >
-              <Smile size={18} />
-            </button>
             <button
               type="submit"
               disabled={!input.trim() || !isConnected}
