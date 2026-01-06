@@ -1,16 +1,28 @@
 "use client";
 import React, { useState } from "react";
-import { User, Lock, ShieldAlert, CalendarClock, Loader2 } from "lucide-react";
+import {
+  User,
+  Lock,
+  ShieldAlert,
+  CalendarClock,
+  Loader2,
+  Euro,
+  Network,
+} from "lucide-react";
 import { useSettings } from "./hooks/useSettings";
 
 import { GeneralProfileForm } from "../generics/settings/GeneralProfileForm";
 import { SecurityForm } from "../generics/settings/SecurityForm";
 import { AccountActions } from "../generics/settings/AccountActions";
 import { AvailabilityManager } from "../schedule-settings/AvailabilityManager";
+import ServicesView from "../onboarding/ServicesView";
+import PortfolioView from "../onboarding/PortfolioView";
 
 const TABS = [
   { id: "profile", label: "General Profile", icon: User },
   { id: "availability", label: "Availability", icon: CalendarClock },
+  { id: "pricing", label: "Pricing", icon: Euro },
+  { id: "portfolio", label: "Portfolio", icon: Network },
   { id: "security", label: "Password & Security", icon: Lock },
   {
     id: "account",
@@ -77,6 +89,8 @@ export const SettingsScreen = () => {
               <GeneralProfileForm profile={profile} />
             )}
             {activeTab === "availability" && <AvailabilityManager />}
+            {activeTab === "pricing" && <ServicesView />}
+            {activeTab === "portfolio" && <PortfolioView />}
             {activeTab === "security" && <SecurityForm />}
             {activeTab === "account" && <AccountActions profile={profile} />}
           </div>
