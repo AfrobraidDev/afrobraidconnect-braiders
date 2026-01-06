@@ -15,6 +15,7 @@ export default function ProgressBar({ currentStep = 1 }) {
     { label: t("identity"), path: "/onboarding/identity" },
     { label: t("services"), path: "/onboarding/services" },
     { label: t("portfolio"), path: "/onboarding/portfolio" },
+    { label: t("pricing"), path: "/onboarding/pricing" },
     { label: t("payment"), path: "/onboarding/payment" },
   ];
 
@@ -27,7 +28,7 @@ export default function ProgressBar({ currentStep = 1 }) {
           <div className="grid grid-cols-[auto_1fr_auto] items-center h-full gap-4 sm:gap-8">
             <div className="flex-shrink-0 w-[120px] sm:w-[140px] flex items-center z-10">
               <Link
-                href="/"
+                href="/dashboard"
                 className="relative h-10 w-32 block transition-opacity hover:opacity-80"
               >
                 <Image

@@ -62,7 +62,8 @@
     "identity": "Identity Verification",
     "services": "Services",
     "portfolio": "Portfolio",
-    "payment": "Payment"
+    "payment": "Payment",
+    "pricing": "Pricing"
   },
   "Services": {
     "title": "Service & Location",
@@ -150,5 +151,43 @@
       "Saturday": "Saturday",
       "Sunday": "Sunday"
     }
+  },
+  "ServicesPricing": {
+    "title": "Set your Prices",
+    "subtitle": "Define the base price for your skills and add variations for length and size.",
+    "addService": "Add Service",
+    "atLeastOneService": "Please add at least one service to continue.",
+    "variations": "Variations",
+    "noServices": "No services added yet",
+    "noServicesDesc": "Start by adding pricing for the skills you selected previously.",
+    "addFirstService": "Add Your First Service",
+    "saveAndFinish": "Save & Continue",
+    "deleteSuccess": "Service deleted successfully.",
+    "deleteError": "Failed to delete service.",
+    "confirmDelete": "Are you sure you want to delete this service?"
+  },
+  "ServiceModal": {
+    "newService": "Add New Service",
+    "editService": "Edit Service",
+    "skillLabel": "Braiding Style",
+    "noSkillsFound": "No skills available",
+    "addSkillsWarning": "You need to add skills in the previous step first.",
+    "priceLabel": "Base Price",
+    "durationLabel": "Duration",
+    "descLabel": "Description",
+    "descPlaceholder": "e.g. Hair is provided. Please come washed...",
+    "variationsTitle": "Variations & Add-ons",
+    "addVariation": "Add Variation",
+    "noVariations": "No variations added. Use this for standard pricing.",
+    "varNamePlaceholder": "Name (e.g. Waist Length)",
+    "catLength": "Length",
+    "catSize": "Size",
+    "catAddon": "Add-on",
+    "cancel": "Cancel",
+    "createService": "Create Service",
+    "saveChanges": "Save Changes",
+    "updatedSuccess": "Service updated!",
+    "createdSuccess": "Service created!",
+    "errorOccurred": "An error occurred."
   }
 }

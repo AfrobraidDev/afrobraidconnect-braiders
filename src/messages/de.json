@@ -62,7 +62,8 @@
     "identity": "Identitätsprüfung",
     "services": "Dienstleistungen",
     "portfolio": "Portfolio",
-    "payment": "Zahlung"
+    "payment": "Zahlung",
+    "pricing": "Preise"
   },
   "Services": {
     "title": "Service & Standort",
@@ -150,5 +151,43 @@
       "Saturday": "Samstag",
       "Sunday": "Sonntag"
     }
+  },
+  "ServicesPricing": {
+    "title": "Preise festlegen",
+    "subtitle": "Definieren Sie den Grundpreis für Ihre Fähigkeiten und fügen Sie Variationen für Länge und Größe hinzu.",
+    "addService": "Dienstleistung hinzufügen",
+    "atLeastOneService": "Bitte fügen Sie mindestens eine Dienstleistung hinzu, um fortzufahren.",
+    "variations": "Variationen",
+    "noServices": "Noch keine Dienstleistungen hinzugefügt",
+    "noServicesDesc": "Beginnen Sie damit, Preise für die zuvor ausgewählten Fähigkeiten hinzuzufügen.",
+    "addFirstService": "Erste Dienstleistung hinzufügen",
+    "saveAndFinish": "Speichern & Weiter",
+    "deleteSuccess": "Dienstleistung erfolgreich gelöscht.",
+    "deleteError": "Löschen der Dienstleistung fehlgeschlagen.",
+    "confirmDelete": "Sind Sie sicher, dass Sie diese Dienstleistung löschen möchten?"
+  },
+  "ServiceModal": {
+    "newService": "Neue Dienstleistung hinzufügen",
+    "editService": "Dienstleistung bearbeiten",
+    "skillLabel": "Flechtstil",
+    "noSkillsFound": "Keine Fähigkeiten verfügbar",
+    "addSkillsWarning": "Sie müssen im vorherigen Schritt zuerst Fähigkeiten hinzufügen.",
+    "priceLabel": "Grundpreis",
+    "durationLabel": "Dauer",
+    "descLabel": "Beschreibung",
+    "descPlaceholder": "z.B. Haare werden gestellt. Bitte kommen Sie mit gewaschenen...",
+    "variationsTitle": "Variationen & Extras",
+    "addVariation": "Variation hinzufügen",
+    "noVariations": "Keine Variationen hinzugefügt. Dies gilt für Standardpreise.",
+    "varNamePlaceholder": "Name (z.B. Taillenlänge)",
+    "catLength": "Länge",
+    "catSize": "Größe",
+    "catAddon": "Zusatz",
+    "cancel": "Abbrechen",
+    "createService": "Dienstleistung erstellen",
+    "saveChanges": "Änderungen speichern",
+    "updatedSuccess": "Dienstleistung aktualisiert!",
+    "createdSuccess": "Dienstleistung erstellt!",
+    "errorOccurred": "Ein Fehler ist aufgetreten."
   }
 }

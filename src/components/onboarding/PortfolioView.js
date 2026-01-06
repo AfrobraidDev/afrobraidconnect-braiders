@@ -160,7 +160,7 @@ export default function PortfolioView() {
     onSuccess: () => {
       toast.success("Profile saved!");
       queryClient.invalidateQueries({ queryKey: ["braiderProfile"] });
-      router.push("/onboarding/payment");
+      router.push("/onboarding/pricing");
     },
     onError: (error) => {
       console.error(error);
@@ -187,7 +187,7 @@ export default function PortfolioView() {
       JSON.stringify([...initialSkillIds].sort());
 
     if (!hasSkillsChanged) {
-      router.push("/onboarding/payment");
+      router.push("/onboarding/pricing");
       return;
     }
 

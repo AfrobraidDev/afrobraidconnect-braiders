@@ -22,7 +22,7 @@ import { apiController } from "@/utils/apiController";
 import ProgressBar from "../generics/ProgressBar";
 import Button from "../generics/ui/Button";
 
-const CURRENT_STEP = 5;
+const CURRENT_STEP = 6;
 const POLL_INTERVAL_MS = 3000;
 const MAX_POLL_ATTEMPTS = 20;
 
@@ -135,7 +135,7 @@ export default function PaymentSetupView() {
   };
 
   const handleBack = () => {
-    router.push("/onboarding/portfolio");
+    router.push("/onboarding/pricing");
   };
 
   const handleSkip = () => {

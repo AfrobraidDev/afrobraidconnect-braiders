@@ -62,7 +62,8 @@
     "identity": "Vérification d'identité",
     "services": "Services",
     "portfolio": "Portfolio",
-    "payment": "Paiement"
+    "payment": "Paiement",
+    "pricing": "Tarifs"
   },
   "Services": {
     "title": "Service & Lieu",
@@ -150,5 +151,43 @@
       "Saturday": "Samedi",
       "Sunday": "Dimanche"
     }
+  },
+  "ServicesPricing": {
+    "title": "Définissez vos prix",
+    "subtitle": "Définissez le prix de base pour vos compétences et ajoutez des variations pour la longueur et la taille.",
+    "addService": "Ajouter un service",
+    "atLeastOneService": "Veuillez ajouter au moins un service pour continuer.",
+    "variations": "Variations",
+    "noServices": "Aucun service ajouté pour le moment",
+    "noServicesDesc": "Commencez par ajouter des prix pour les compétences sélectionnées précédemment.",
+    "addFirstService": "Ajouter votre premier service",
+    "saveAndFinish": "Enregistrer et continuer",
+    "deleteSuccess": "Service supprimé avec succès.",
+    "deleteError": "Échec de la suppression du service.",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce service ?"
+  },
+  "ServiceModal": {
+    "newService": "Ajouter un nouveau service",
+    "editService": "Modifier le service",
+    "skillLabel": "Style de tressage",
+    "noSkillsFound": "Aucune compétence disponible",
+    "addSkillsWarning": "Vous devez d'abord ajouter des compétences à l'étape précédente.",
+    "priceLabel": "Prix de base",
+    "durationLabel": "Durée",
+    "descLabel": "Description",
+    "descPlaceholder": "ex. Cheveux fournis. Veuillez venir avec les cheveux lavés...",
+    "variationsTitle": "Variations et suppléments",
+    "addVariation": "Ajouter une variation",
+    "noVariations": "Aucune variation ajoutée. Utiliser pour la tarification standard.",
+    "varNamePlaceholder": "Nom (ex. Longueur taille)",
+    "catLength": "Longueur",
+    "catSize": "Taille",
+    "catAddon": "Supplément",
+    "cancel": "Annuler",
+    "createService": "Créer le service",
+    "saveChanges": "Enregistrer les modifications",
+    "updatedSuccess": "Service mis à jour !",
+    "createdSuccess": "Service créé !",
+    "errorOccurred": "Une erreur s'est produite."
   }
 }
