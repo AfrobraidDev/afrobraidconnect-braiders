@@ -172,7 +172,7 @@ export const BraiderSidebar = () => {
 
       <header className="md:hidden flex justify-between items-center p-4 bg-white border-b border-gray-100 sticky top-0 z-20">
         <Image
-          src="/images/setuplogo.png"
+          src="/logo/logo.webp"
           alt="Logo"
           width={120}
           height={32}
