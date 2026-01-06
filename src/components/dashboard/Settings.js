@@ -2,11 +2,11 @@
 import React, { useState } from "react";
 import { User, Lock, ShieldAlert, CalendarClock, Loader2 } from "lucide-react";
 import { useSettings } from "./hooks/useSettings";
-import AvailabilitySettings from "../onboarding/AvailabilitySettings";
 
 import { GeneralProfileForm } from "../generics/settings/GeneralProfileForm";
 import { SecurityForm } from "../generics/settings/SecurityForm";
 import { AccountActions } from "../generics/settings/AccountActions";
+import { AvailabilityManager } from "../schedule-settings/AvailabilityManager";
 
 const TABS = [
   { id: "profile", label: "General Profile", icon: User },
@@ -76,7 +76,7 @@ export const SettingsScreen = () => {
             {activeTab === "profile" && (
               <GeneralProfileForm profile={profile} />
             )}
-            {activeTab === "availability" && <AvailabilitySettings />}
+            {activeTab === "availability" && <AvailabilityManager />}
             {activeTab === "security" && <SecurityForm />}
             {activeTab === "account" && <AccountActions profile={profile} />}
           </div>
