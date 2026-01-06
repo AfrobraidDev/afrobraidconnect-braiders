@@ -12,7 +12,6 @@ import {
 import { format } from "date-fns";
 import Button from "@/components/generics/ui/Button";
 
-// --- FIXED PICKER COMPONENT ---
 const ModernDateTimePicker = ({
   label,
   dateValue,
@@ -23,7 +22,6 @@ const ModernDateTimePicker = ({
   const dateInputRef = useRef(null);
   const timeInputRef = useRef(null);
 
-  // Format visual text
   const displayDate = dateValue
     ? format(new Date(dateValue), "EEE, MMM d, yyyy")
     : "Select Date";
@@ -36,13 +34,12 @@ const ModernDateTimePicker = ({
     displayTime = format(dummyDate, "h:mm a");
   }
 
-  // ✅ Force open the picker using the modern Browser API
   const handleOpenPicker = (ref) => {
     try {
       if (ref.current && typeof ref.current.showPicker === "function") {
         ref.current.showPicker();
       } else if (ref.current) {
-        ref.current.focus(); // Fallback for older browsers
+        ref.current.focus();
       }
     } catch (error) {
       console.log("Picker open error:", error);
@@ -56,22 +53,19 @@ const ModernDateTimePicker = ({
       </label>
 
       <div className="flex gap-2 h-14">
-        {/* DATE CARD */}
         <div
           className="relative flex-grow bg-gray-50 hover:bg-white hover:shadow-md hover:border-red-200 border border-gray-200 rounded-xl transition-all duration-200 cursor-pointer overflow-hidden"
           onClick={() => handleOpenPicker(dateInputRef)}
         >
-          {/* Native Input: Invisible but accessible */}
           <input
             ref={dateInputRef}
             type="date"
             value={dateValue}
             onChange={onDateChange}
             className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
-            tabIndex={-1} // Prevent tabbing to the invisible input, tab to the container instead
+            tabIndex={-1}
           />
 
-          {/* Visuals */}
           <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
             <CalendarDays className="w-5 h-5 text-gray-400 mr-3 group-hover:text-red-500 transition-colors" />
             <div className="flex flex-col justify-center">
@@ -86,7 +80,6 @@ const ModernDateTimePicker = ({
           </div>
         </div>
 
-        {/* TIME CARD */}
         <div
           className="relative w-28 bg-gray-50 hover:bg-white hover:shadow-md hover:border-red-200 border border-gray-200 rounded-xl transition-all duration-200 cursor-pointer overflow-hidden"
           onClick={() => handleOpenPicker(timeInputRef)}
@@ -153,7 +146,6 @@ export const DateActionModal = ({ date, onClose, onBlock, isProcessing }) => {
       />
 
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-300 flex flex-col max-h-[90vh]">
-        {/* Header */}
         <div className="relative bg-white p-6 border-b border-gray-100">
           <div className="flex justify-between items-start">
             <div className="flex gap-4 items-center">
@@ -178,7 +170,6 @@ export const DateActionModal = ({ date, onClose, onBlock, isProcessing }) => {
           </div>
         </div>
 
-        {/* Body */}
         <div className="p-6 md:p-8 overflow-y-auto space-y-8 bg-white">
           <div className="flex gap-4 p-4 rounded-2xl bg-gradient-to-r from-orange-50 to-white border border-orange-100 shadow-sm">
             <div className="p-2 bg-white rounded-full h-fit shadow-sm text-orange-500">
@@ -189,8 +180,8 @@ export const DateActionModal = ({ date, onClose, onBlock, isProcessing }) => {
                 Note to Braider
               </h4>
               <p className="text-sm text-gray-500 leading-relaxed mt-1">
-                Your profile will show as "Busy" for these times. Existing
-                bookings will not be cancelled automatically.
+                Your profile will show as &quot;Busy&quot; for these times.
+                Existing bookings will not be cancelled automatically.
               </p>
             </div>
           </div>
@@ -204,7 +195,6 @@ export const DateActionModal = ({ date, onClose, onBlock, isProcessing }) => {
               onTimeChange={(e) => setStart({ ...start, time: e.target.value })}
             />
 
-            {/* Desktop Arrow Connector */}
             <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] text-gray-300 z-0">
               <ArrowRight size={24} />
             </div>
@@ -232,7 +222,6 @@ export const DateActionModal = ({ date, onClose, onBlock, isProcessing }) => {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="p-6 border-t border-gray-100 bg-gray-50/30 flex flex-col-reverse sm:flex-row justify-end gap-3">
           <button
             onClick={onClose}
