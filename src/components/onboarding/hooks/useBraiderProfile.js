@@ -18,8 +18,6 @@ export const useBraiderProfile = () => {
       return response.data;
     },
     enabled: !!session?.accessToken,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
   });
 
   const updateProfileMutation = useMutation({
@@ -32,7 +30,7 @@ export const useBraiderProfile = () => {
         token: session?.accessToken,
       }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["braiderProfile"]);
+      queryClient.invalidateQueries({ queryKey: ["braiderProfile"] });
     },
   });
 
@@ -40,6 +38,7 @@ export const useBraiderProfile = () => {
     data: profileQuery.data,
     isLoading: profileQuery.isLoading,
     isError: profileQuery.isError,
+    refetch: profileQuery.refetch,
     updateProfile: updateProfileMutation.mutateAsync,
     isUpdating: updateProfileMutation.isPending,
   };

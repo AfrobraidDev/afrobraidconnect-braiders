@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import { useBraiderProfile } from "./hooks/useBraiderProfile";
 import { apiController } from "@/utils/apiController";
 
@@ -29,13 +30,10 @@ export default function IdentityVerificationView() {
   const router = useRouter();
   const t = useTranslations("Identity");
   const tCommon = useTranslations("Common");
+  const queryClient = useQueryClient();
 
   const { data: session } = useSession();
-  const {
-    data: profile,
-    isLoading: isProfileLoading,
-    mutate: refreshProfile,
-  } = useBraiderProfile();
+  const { data: profile, isLoading: isProfileLoading } = useBraiderProfile();
 
   const [isVerifyingDoc, setIsVerifyingDoc] = useState(false);
 
@@ -83,8 +81,9 @@ export default function IdentityVerificationView() {
         token: session?.accessToken,
         data: { otp },
       });
+
       toast.success("Phone verified successfully!");
-      refreshProfile();
+      await queryClient.invalidateQueries({ queryKey: ["braiderProfile"] });
       setPhoneStep("INPUT");
       setOtp("");
     } catch (error) {
@@ -112,6 +111,7 @@ export default function IdentityVerificationView() {
         throw new Error("No URL received");
       }
     } catch (error) {
+      console.error(error);
       toast.error("Could not start verification.");
       setIsVerifyingDoc(false);
     }
@@ -222,6 +222,7 @@ export default function IdentityVerificationView() {
           </div>
 
           <div className="space-y-6">
+            {/* PHONE VERIFICATION SECTION */}
             <div
               className={`p-6 border transition-all duration-300 ${
                 isPhoneVerified
@@ -255,6 +256,7 @@ export default function IdentityVerificationView() {
                         }`
                       : t("phoneDesc")}
                   </p>
+
                   {!isPhoneVerified && (
                     <div className="max-w-sm space-y-4">
                       {phoneStep === "INPUT" ? (
@@ -270,11 +272,7 @@ export default function IdentityVerificationView() {
                               onChange={(e) => setPhoneNumber(e.target.value)}
                               required
                             />
-                            <p className="mt-1 text-xs text-gray-500">
-                              {t("phoneDesc")}
-                            </p>
                           </div>
-
                           <Button
                             type="submit"
                             isLoading={isPhoneLoading}
@@ -325,6 +323,7 @@ export default function IdentityVerificationView() {
               </div>
             </div>
 
+            {/* DOCUMENT VERIFICATION SECTION */}
             <div
               className={`p-6 border transition-all duration-300 ${docContent.color} shadow-sm`}
             >
