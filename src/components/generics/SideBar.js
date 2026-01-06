@@ -15,8 +15,10 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  LogOut,
 } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/navigation";
+import { signOut } from "next-auth/react";
 
 const NavLink = ({ href, icon: Icon, children }) => {
   const pathname = usePathname();
@@ -64,6 +66,10 @@ const SidebarContent = () => {
     { code: "de", label: "Deutsch (DE)" },
     { code: "fr", label: "Français (FR)" },
   ];
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/login" });
+  };
 
   return (
     <div className="flex flex-col justify-between h-full p-4">
@@ -137,6 +143,16 @@ const SidebarContent = () => {
           <NavLink href="/dashboard/support" icon={LifeBuoy}>
             Support
           </NavLink>
+
+          <li className="pt-2 mt-2 border-t border-gray-100">
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full p-3 rounded-lg transition-colors duration-200 group text-gray-600 hover:bg-red-50 hover:text-red-600"
+            >
+              <LogOut className="w-5 h-5 text-gray-400 group-hover:text-red-500" />
+              <span className="ml-4 font-medium">Logout</span>
+            </button>
+          </li>
         </ul>
       </div>
     </div>
