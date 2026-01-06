@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/navigation";
 import { signOut } from "next-auth/react";
+import { useLocale } from "next-intl";
 
 const NavLink = ({ href, icon: Icon, children }) => {
   const pathname = usePathname();
@@ -54,10 +55,11 @@ const NavLink = ({ href, icon: Icon, children }) => {
 const SidebarContent = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale();
   const [isLangOpen, setIsLangOpen] = useState(false);
 
-  const switchLanguage = (locale) => {
-    router.replace(pathname, { locale });
+  const switchLanguage = (newLocale) => {
+    router.replace(pathname, { locale: newLocale });
     setIsLangOpen(false);
   };
 
@@ -68,7 +70,7 @@ const SidebarContent = () => {
   ];
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/login" });
+    await signOut({ callbackUrl: `/${locale}/login` });
   };
 
   return (
@@ -77,7 +79,7 @@ const SidebarContent = () => {
         <div className="flex items-center mb-10 pl-2">
           <Link href="/dashboard">
             <Image
-              src="/images/setuplogo.png"
+              src="/logo/logo.webp"
               alt="Logo"
               width={150}
               height={40}
