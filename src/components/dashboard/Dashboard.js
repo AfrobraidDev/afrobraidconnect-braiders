@@ -7,7 +7,6 @@ import {
   StatCard,
   NextAppointment,
   ActivityTabs,
-  Reviews,
 } from "../generics/dashboard";
 import { useDashboard } from "./hooks/useDashboard";
 
