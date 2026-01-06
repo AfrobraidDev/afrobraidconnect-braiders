@@ -1,5 +1,5 @@
-import { PortfolioScreen } from "@/components/dashboard/Portfolio";
+import PortfolioView from "@/components/onboarding/PortfolioView";
 
 export default function PortfolioPage() {
-  return <PortfolioScreen />;
+  return <PortfolioView />;
 }
