@@ -17,26 +17,18 @@ export default function ChatView({ bookingId }) {
     session?.user?.id
   );
 
-  // Auto-scroll to bottom
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ✅ Trigger "Mark Read" Logic
   useEffect(() => {
     if (!messages.length || !isConnected) return;
 
-    // Logic: If the LAST message is NOT from me, it means I have pending unread messages.
-    // Since I am viewing this component, I should mark them as read.
     const lastMessage = messages[messages.length - 1];
 
     if (!lastMessage.is_me) {
-      // Call the API
       markAsRead();
     }
-
-    // Note: We also call this on Mount (via messages dependency)
-    // to clear any unread badge from previous sessions.
   }, [messages, isConnected, markAsRead]);
 
   const handleSend = (e) => {
@@ -56,7 +48,6 @@ export default function ChatView({ bookingId }) {
 
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-      {/* Header */}
       <div className="bg-white border-b border-gray-100 p-4 flex justify-between items-center bg-gray-50/50">
         <div>
           <h3 className="font-bold text-gray-900">Booking Chat</h3>
@@ -73,7 +64,6 @@ export default function ChatView({ bookingId }) {
         </div>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
         {messages.map((msg, index) => (
           <div
@@ -93,7 +83,6 @@ export default function ChatView({ bookingId }) {
                 </span>
               )}
 
-              {/* Bubble */}
               <div
                 className={`
                   px-4 py-2.5 text-sm rounded-2xl shadow-sm
@@ -107,7 +96,6 @@ export default function ChatView({ bookingId }) {
                 {msg.content}
               </div>
 
-              {/* Meta Row: Timestamp & Ticks */}
               <div className="flex items-center gap-1 mt-1 px-1">
                 <span className="text-[10px] text-gray-400">
                   {msg.timestamp
@@ -115,7 +103,6 @@ export default function ChatView({ bookingId }) {
                     : ""}
                 </span>
 
-                {/* ✅ Render Ticks only for MY messages */}
                 {msg.is_me && (
                   <span
                     className={msg.is_read ? "text-blue-500" : "text-gray-400"}
@@ -130,7 +117,6 @@ export default function ChatView({ bookingId }) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <form
         onSubmit={handleSend}
         className="p-3 bg-white border-t border-gray-100 flex items-center gap-2"
