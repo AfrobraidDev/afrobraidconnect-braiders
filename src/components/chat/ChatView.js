@@ -2,14 +2,40 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Send, Loader2, CheckCheck } from "lucide-react";
+import {
+  Send,
+  Loader2,
+  CheckCheck,
+  X,
+  Minus,
+  Paperclip,
+  Smile,
+  MessageCircle,
+} from "lucide-react";
 import { format } from "date-fns";
 import { useChat } from "./useChat";
 
-export default function ChatView({ bookingId }) {
+const getInitials = (name) =>
+  name
+    ? name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .substring(0, 2)
+        .toUpperCase()
+    : "??";
+
+export default function ChatView({
+  bookingId,
+  clientName = "Client",
+  onClose,
+}) {
   const { data: session } = useSession();
   const bottomRef = useRef(null);
+
+  const [isMinimized, setIsMinimized] = useState(false);
   const [input, setInput] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
 
   const { messages, isLoading, isConnected, sendMessage, markAsRead } = useChat(
     bookingId,
@@ -18,18 +44,23 @@ export default function ChatView({ bookingId }) {
   );
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
-    if (!messages.length || !isConnected) return;
-
-    const lastMessage = messages[messages.length - 1];
-
-    if (!lastMessage.is_me) {
-      markAsRead();
+    if (!isMinimized) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isConnected, markAsRead]);
+  }, [messages, isMinimized]);
+
+  useEffect(() => {
+    if (!messages.length || !isConnected || isMinimized) return;
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage.is_me) markAsRead();
+  }, [messages, isConnected, markAsRead, isMinimized]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -38,105 +69,226 @@ export default function ChatView({ bookingId }) {
     setInput("");
   };
 
-  if (isLoading) {
+  if (isMinimized) {
     return (
-      <div className="flex h-[500px] items-center justify-center bg-gray-50 rounded-2xl border border-gray-100">
-        <Loader2 className="w-8 h-8 text-[#b5734c] animate-spin" />
-      </div>
+      <button
+        onClick={() => setIsMinimized(false)}
+        className="fixed bottom-6 right-6 z-[9999] p-4 bg-[#b5734c] hover:bg-[#a06543] text-white rounded-full shadow-2xl transition-all transform hover:scale-110 active:scale-95 flex items-center justify-center group animate-in zoom-in duration-200"
+      >
+        <span className="absolute -top-1 -right-1 flex h-4 w-4">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-white"></span>
+        </span>
+        <MessageCircle size={28} />
+        <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs py-1.5 px-3 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          Chat with {clientName}
+          <div className="absolute top-1/2 -right-1 -translate-y-1/2 border-8 border-transparent border-l-gray-900"></div>
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute -top-2 -left-2 bg-gray-200 text-gray-600 rounded-full p-1 hover:bg-red-500 hover:text-white transition-colors"
+          title="Close Chat"
+        >
+          <X size={12} />
+        </div>
+      </button>
     );
   }
 
   return (
-    <div className="flex flex-col h-[600px] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="bg-white border-b border-gray-100 p-4 flex justify-between items-center bg-gray-50/50">
-        <div>
-          <h3 className="font-bold text-gray-900">Booking Chat</h3>
-          <div className="flex items-center gap-2 mt-1">
+    <div
+      className={`
+        fixed z-[9999] transition-all duration-300 ease-in-out shadow-2xl overflow-hidden bg-white font-sans flex flex-col
+        ${
+          isMobile
+            ? "inset-0 rounded-none"
+            : "bottom-0 right-16 w-80 h-[500px] rounded-t-xl border border-gray-200"
+        }
+        animate-in slide-in-from-bottom-10
+      `}
+    >
+      <div
+        className={`
+          flex justify-between items-center px-3 py-2 cursor-pointer select-none shadow-sm relative shrink-0
+          ${
+            isMobile
+              ? "bg-white border-b border-gray-100 pt-safe-top"
+              : "bg-[#b5734c]"
+          }
+        `}
+        onClick={() => !isMobile && setIsMinimized(true)}
+      >
+        <div className="flex items-center gap-2.5 overflow-hidden">
+          <div className="relative shrink-0">
+            <div
+              className={`flex items-center justify-center w-9 h-9 rounded-full shadow-inner font-bold text-sm ${
+                isMobile
+                  ? "bg-orange-50 text-[#b5734c]"
+                  : "bg-white text-[#b5734c]"
+              }`}
+            >
+              {getInitials(clientName)}
+            </div>
             <span
-              className={`w-2 h-2 rounded-full ${
-                isConnected ? "bg-green-500" : "bg-red-500"
+              className={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white ${
+                isConnected ? "bg-green-500" : "bg-gray-400"
               }`}
             />
-            <span className="text-xs text-gray-500">
-              {isConnected ? "Online" : "Connecting..."}
-            </span>
           </div>
+          <div className="min-w-0">
+            <h3
+              className={`font-bold text-sm leading-tight truncate ${
+                isMobile ? "text-gray-900" : "text-white"
+              }`}
+            >
+              {clientName}
+            </h3>
+            <p
+              className={`text-[11px] truncate ${
+                isMobile ? "text-gray-500" : "text-white/90"
+              }`}
+            >
+              {isLoading
+                ? "Loading..."
+                : isConnected
+                ? "Active now"
+                : "Connecting..."}
+            </p>
+          </div>
+        </div>
+
+        <div
+          className="flex items-center gap-1 shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {!isMobile && (
+            <button
+              onClick={() => setIsMinimized(true)}
+              className="p-1.5 rounded-full hover:bg-white/20 text-white transition-colors focus:outline-none"
+              title="Minimize"
+            >
+              <Minus size={18} />
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className={`p-1.5 rounded-full transition-colors focus:outline-none ${
+              isMobile
+                ? "text-gray-400 hover:bg-gray-100"
+                : "text-white hover:bg-white/20"
+            }`}
+            title="Close Chat"
+          >
+            <X size={20} />
+          </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
-        {messages.map((msg, index) => (
-          <div
-            key={msg.id || index}
-            className={`flex w-full ${
-              msg.is_me ? "justify-end" : "justify-start"
-            }`}
+      <div className="flex flex-col flex-1 min-h-0 bg-white">
+        <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-[#f0f2f5] scrollbar-thin scrollbar-thumb-gray-300">
+          {isLoading ? (
+            <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-2">
+              <Loader2 className="w-6 h-6 animate-spin text-[#b5734c]" />
+              <span className="text-xs font-medium">Loading history...</span>
+            </div>
+          ) : (
+            <>
+              <div className="text-center my-4">
+                <span className="text-[10px] font-medium text-gray-500">
+                  {format(new Date(), "MMMM d, yyyy")}
+                </span>
+              </div>
+              {messages.map((msg, index) => (
+                <div
+                  key={msg.id || index}
+                  className={`flex w-full ${
+                    msg.is_me ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`flex flex-col max-w-[75%] ${
+                      msg.is_me ? "items-end" : "items-start"
+                    }`}
+                  >
+                    <div
+                      className={`px-3 py-2 text-[14px] shadow-sm relative group break-words ${
+                        msg.is_me
+                          ? "bg-[#b5734c] text-white rounded-2xl rounded-tr-sm"
+                          : "bg-white text-gray-900 border border-gray-200 rounded-2xl rounded-tl-sm"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                    <div className="flex items-center gap-1 mt-0.5 px-1">
+                      <span className="text-[9px] text-gray-400">
+                        {msg.timestamp
+                          ? format(new Date(msg.timestamp), "h:mm a")
+                          : ""}
+                      </span>
+                      {msg.is_me && (
+                        <span
+                          className={
+                            msg.is_read ? "text-blue-500" : "text-gray-300"
+                          }
+                        >
+                          <CheckCheck size={12} />
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div ref={bottomRef} />
+            </>
+          )}
+        </div>
+
+        <div
+          className={`p-2 bg-white border-t border-gray-100 ${
+            isMobile ? "pb-safe-bottom" : ""
+          }`}
+        >
+          <form
+            onSubmit={handleSend}
+            className="flex items-end gap-1.5 bg-gray-100 p-1.5 rounded-[20px] focus-within:ring-2 focus-within:ring-[#b5734c]/20 transition-all"
           >
-            <div
-              className={`flex flex-col max-w-[75%] ${
-                msg.is_me ? "items-end" : "items-start"
+            <button
+              type="button"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-200"
+            >
+              <Paperclip size={18} />
+            </button>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Aa"
+              disabled={!isConnected}
+              className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-1 placeholder:text-gray-500 min-w-0"
+            />
+            <button
+              type="button"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors hidden sm:block rounded-full hover:bg-gray-200"
+            >
+              <Smile size={18} />
+            </button>
+            <button
+              type="submit"
+              disabled={!input.trim() || !isConnected}
+              className={`p-2 rounded-full transition-all duration-200 flex items-center justify-center ${
+                input.trim()
+                  ? "text-[#b5734c] hover:bg-gray-200"
+                  : "text-gray-300 cursor-not-allowed"
               }`}
             >
-              {!msg.is_me && (
-                <span className="text-[10px] text-gray-400 mb-1 ml-2">
-                  {msg.sender_name || "User"}
-                </span>
-              )}
-
-              <div
-                className={`
-                  px-4 py-2.5 text-sm rounded-2xl shadow-sm
-                  ${
-                    msg.is_me
-                      ? "bg-[#b5734c] text-white rounded-br-none"
-                      : "bg-white text-gray-800 border border-gray-100 rounded-bl-none"
-                  }
-                `}
-              >
-                {msg.content}
-              </div>
-
-              <div className="flex items-center gap-1 mt-1 px-1">
-                <span className="text-[10px] text-gray-400">
-                  {msg.timestamp
-                    ? format(new Date(msg.timestamp), "h:mm a")
-                    : ""}
-                </span>
-
-                {msg.is_me && (
-                  <span
-                    className={msg.is_read ? "text-blue-500" : "text-gray-400"}
-                  >
-                    <CheckCheck size={14} />
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-        <div ref={bottomRef} />
+              <Send size={20} className={input.trim() ? "ml-0.5" : ""} />
+            </button>
+          </form>
+        </div>
       </div>
-
-      <form
-        onSubmit={handleSend}
-        className="p-3 bg-white border-t border-gray-100 flex items-center gap-2"
-      >
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          disabled={!isConnected}
-          className="flex-1 px-4 py-2.5 bg-gray-100 border-transparent focus:bg-white focus:border-gray-200 border rounded-xl focus:outline-none transition-all text-sm"
-        />
-        <button
-          type="submit"
-          disabled={!input.trim() || !isConnected}
-          className="p-2.5 bg-[#b5734c] hover:bg-[#a06543] text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <Send size={18} />
-        </button>
-      </form>
     </div>
   );
 }
