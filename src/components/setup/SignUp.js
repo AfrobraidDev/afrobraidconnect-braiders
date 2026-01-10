@@ -16,45 +16,37 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-// --- Custom Input Field Component for consistent styling ---
-// Applies the clean aesthetic: padding, border, focus color (#b47550)
+// --- Custom Input Field Component (No changes here) ---
 const InputField = ({ icon, label, ...props }) => {
-  // Determine if this input should have the password toggle logic
   const isPassword = 
     props.name === "password" || props.name === "confirm_password";
   
-  // Use a local state for password visibility if it is a password field
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div>
-      {/* Label (visible) */}
       <label htmlFor={props.name} className="block text-gray-900 mb-1 text-sm font-medium">
         {label}*
       </label>
       
       <div className="relative">
-        {/* Icon (Lock/User/Mail) */}
         {icon && (
           <div className="absolute inset-y-0 left-0 flex items-center pl-3">
             {icon}
           </div>
         )}
 
-        {/* Input Element */}
         <input
           id={props.name}
           className={`
             w-full py-3 px-4 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 
             focus:outline-none focus:ring-1 focus:ring-[#b47550] focus:border-[#b47550] transition
-            ${icon ? "pl-10" : "pl-4"} /* Adjust padding based on icon presence */
+            ${icon ? "pl-10" : "pl-4"}
           `}
           {...props}
-          // Set the type based on the toggle state for password fields
           type={isPassword && !showPassword ? "password" : props.type}
         />
 
-        {/* Password Visibility Toggle Button */}
         {isPassword && (
           <button
             type="button"
@@ -69,8 +61,6 @@ const InputField = ({ icon, label, ...props }) => {
     </div>
   );
 };
-// --- End InputField ---
-
 
 export default function SignupForm({ onBack }) {
   const [formData, setFormData] = useState({
@@ -120,21 +110,23 @@ export default function SignupForm({ onBack }) {
 
   return (
     <div className="min-h-screen flex bg-white">
-      {/* Back Button */}
-        <header className="relative pb-10">
+      
+      {/* LEFT COLUMN: FORM AREA */}
+      <div className="w-full md:w-1/2 flex flex-col justify-between p-6 sm:p-10 lg:p-16 relative">
+        
+        {/* --- MOVED HEADER INSIDE THIS COLUMN --- */}
+        <header className="relative w-full -top-10 -left-10">
           <button
             onClick={onBack}
-            className="absolute -top-4 -left-4 sm:top-0 sm:left-0 p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition shadow-sm"
+            className="p-2 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition shadow-sm inline-flex items-center justify-center"
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
           </button>
         </header>
-      {/* LEFT COLUMN: FORM AREA */}
-      <div className="w-full md:w-1/2 flex flex-col justify-between p-6 sm:p-10 lg:p-16">
 
         {/* Form Content Wrapper */}
-        <main className="flex-grow flex flex-col justify-center max-w-md mx-auto md:mx-0 py-10">
-          {/* Header */}
+        <main className="flex-grow flex flex-col justify-center max-w-md mx-auto w-full py-6">
+          {/* Header Text */}
           <div className="mb-8">
             <h1 className="text-2xl font-semibold text-gray-900 mb-2">Create an Account</h1>
             <p className="text-gray-600 text-sm">Join AfroBraid Connect today!</p>
@@ -155,7 +147,6 @@ export default function SignupForm({ onBack }) {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* First Name */}
                   <InputField
                     label="First Name"
                     icon={<User className="w-5 h-5 text-gray-400" />}
@@ -166,8 +157,6 @@ export default function SignupForm({ onBack }) {
                     value={formData.first_name}
                     onChange={handleChange}
                   />
-                  
-                  {/* Last Name */}
                   <InputField
                     label="Last Name"
                     icon={<User className="w-5 h-5 text-gray-400" />}
@@ -180,7 +169,6 @@ export default function SignupForm({ onBack }) {
                   />
                 </div>
                 
-                {/* Email */}
                 <InputField
                   label="Email Address"
                   icon={<Mail className="w-5 h-5 text-gray-400" />}
@@ -192,7 +180,6 @@ export default function SignupForm({ onBack }) {
                   onChange={handleChange}
                 />
 
-                {/* Password */}
                 <InputField
                   label="Create a Password"
                   icon={<Lock className="w-5 h-5 text-gray-400" />}
@@ -204,7 +191,6 @@ export default function SignupForm({ onBack }) {
                   onChange={handleChange}
                 />
 
-                {/* Confirm Password */}
                 <InputField
                   label="Confirm Password"
                   icon={<Lock className="w-5 h-5 text-gray-400" />}
@@ -216,11 +202,10 @@ export default function SignupForm({ onBack }) {
                   onChange={handleChange}
                 />
 
-                {/* Phone Number - UNTOUCHED, relies on package defaults/global CSS */}
+                {/* Phone Number */}
                 <div>
                   <label className="block text-gray-900 mb-1 text-sm font-medium">Phone Number*</label>
-                  {/* Apply the visual border/focus to the wrapper div */}
-                  <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-1 focus-within:ring-[#b47550] transition h-[48px]">
+                  <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-1 focus-within:ring-[#b47550] transition h-[48px] overflow-hidden">
                     <PhoneInput
                       value={phone}
                       onChange={(phone) => setPhone(phone)}
@@ -230,9 +215,10 @@ export default function SignupForm({ onBack }) {
                         showFlags: true,
                         showCountryCode: true,
                         showCountryName: false,
-                        className: "custom-country-button", 
+                        buttonStyle: { border: 'none', background: 'transparent', paddingLeft: '10px' } 
                       }}
                       placeholder="(555) 000-0000"
+                      style={{ width: '100%', height: '100%' }}
                     />
                   </div>
                 </div>
@@ -257,11 +243,12 @@ export default function SignupForm({ onBack }) {
         </main>
 
         {/* Footer Links */}
-        <footer className="mt-12 flex justify-between items-center text-xs text-gray-500 pt-4">
+        <footer className="mt-12 flex justify-between items-center text-xs text-gray-500 pt-4 border-t border-gray-50 sm:border-none">
           <div className="flex items-center space-x-1">
             <a href="mailto:support@afrobraidconnect.com" className="flex items-center hover:text-gray-700 transition">
               <Mail className="w-4 h-4 mr-1" />
-              support@afrobraidconnect.com
+              <span className="hidden sm:inline">support@afrobraidconnect.com</span>
+              <span className="sm:hidden">Support</span>
             </a>
           </div>
           <div className="flex items-center space-x-1 hover:text-gray-700 cursor-pointer">
@@ -274,7 +261,14 @@ export default function SignupForm({ onBack }) {
 
       {/* Right Image Panel */}
       <div className="relative w-1/2 bg-gray-200 hidden md:block">
-        <Image src="/images/hero.png" alt="Customer booking appointment" fill priority className="object-cover" sizes="(max-width: 768px) 0vw, 50vw" />
+        <Image 
+          src="/images/customer2.jpg" 
+          alt="Customer booking appointment" 
+          fill 
+          priority 
+          className="object-cover" 
+          sizes="(max-width: 768px) 0vw, 50vw" 
+        />
         <div className="absolute inset-0 bg-black/10"></div>
       </div> 
     </div>

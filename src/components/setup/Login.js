@@ -167,7 +167,7 @@ export default function LoginView({ onBack }) {
           <p className="text-center text-sm text-gray-600 mt-8">
             {t("signUpPrompt")}{" "}
             <Link
-              href="/register"
+              href="/signup"
               className="text-[#b5734c] font-medium hover:underline ml-1"
             >
               {t("signUpLink")}
