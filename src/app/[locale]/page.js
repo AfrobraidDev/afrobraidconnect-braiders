@@ -1,3 +1,14 @@
+"use client";
+
+import { useRouter } from "@/navigation";
+import LoginView from "@/components/setup/Login";
+
 export default function Home() {
-  return <h1>Hello World</h1>;
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  return <LoginView onBack={handleBack} />;
 }
