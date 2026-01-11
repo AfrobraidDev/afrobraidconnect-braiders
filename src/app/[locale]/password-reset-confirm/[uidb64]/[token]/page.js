@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Lock } from "lucide-react";
+import { useRouter, Link } from "@/navigation";
+import { useParams } from "next/navigation";
+import { Lock, CheckCircle2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { apiController } from "@/utils/apiController";
+import Input from "@/components/generics/ui/Input";
+import Button from "@/components/generics/ui/Button";
 
-export default function ResetPasswordConfirmPage({ params }) {
+export default function ResetPasswordConfirmPage() {
+  const t = useTranslations("ResetPassword");
+  const params = useParams();
   const { uidb64, token } = params;
   const router = useRouter();
 
@@ -15,7 +20,7 @@ export default function ResetPasswordConfirmPage({ params }) {
     password2: "",
   });
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -26,10 +31,9 @@ export default function ResetPasswordConfirmPage({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccessMessage("");
 
     if (formData.password !== formData.password2) {
-      setError("Passwords do not match.");
+      setError(t("errorMatch"));
       return;
     }
 
@@ -40,97 +44,89 @@ export default function ResetPasswordConfirmPage({ params }) {
         url: "/auth/password-reset-complete/",
         data: { ...formData, uidb64, token },
       });
-      setSuccessMessage(
-        "Your password has been reset successfully! You can now log in."
-      );
-      // Optional: redirect after a delay
-      setTimeout(() => router.push("/login"), 3000);
+
+      setIsSuccess(true);
+      router.push("/login");
     } catch (err) {
-      setError(
-        err.detail ||
-          "Failed to reset password. The link may be invalid or expired."
-      );
+      setError(err?.detail || t("errorGeneric"));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">Set New Password</h1>
-          <p className="mt-2 text-gray-600">
-            Please enter your new password below.
-          </p>
+    <main className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+      <div className="w-full max-w-md p-8 bg-white shadow-xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="flex justify-center mb-6">
+          <div
+            className={`p-4 rounded-full ${
+              isSuccess ? "bg-green-50" : "bg-orange-50"
+            }`}
+          >
+            {isSuccess ? (
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            ) : (
+              <Lock className="w-8 h-8 text-[#b5734c]" />
+            )}
+          </div>
         </div>
 
-        {successMessage ? (
-          <div className="p-4 text-center text-green-800 bg-green-100 border border-green-200 rounded-lg">
-            <p>{successMessage}</p>
-            <Link
-              href="/login"
-              className="block mt-2 font-bold text-indigo-600 hover:underline"
-            >
-              Go to Login
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t("subtitle")}</p>
+        </div>
+
+        {isSuccess ? (
+          <div className="space-y-6 text-center animate-in zoom-in-95">
+            <div className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-lg">
+              {t("successMessage")}
+            </div>
+            <Link href="/login" className="block">
+              <Button className="!w-full">{t("loginLink")}</Button>
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="password" className="sr-only">
-                New Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Lock className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full py-2 pl-10 pr-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="New Password"
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="password2" className="sr-only">
-                Confirm New Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Lock className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  id="password2"
-                  name="password2"
-                  type="password"
-                  required
-                  value={formData.password2}
-                  onChange={handleChange}
-                  className="w-full py-2 pl-10 pr-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Confirm New Password"
-                />
-              </div>
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <Input
+              label={t("passwordLabel")}
+              id="password"
+              name="password"
+              type="password"
+              icon={Lock}
+              value={formData.password}
+              onChange={handleChange}
+              placeholder={t("placeholder")}
+              required
+            />
+
+            <Input
+              label={t("confirmPasswordLabel")}
+              id="password2"
+              name="password2"
+              type="password"
+              icon={Lock}
+              value={formData.password2}
+              onChange={handleChange}
+              placeholder={t("placeholder")}
+              required
+            />
 
             {error && (
-              <p className="text-sm text-center text-red-600">{error}</p>
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg text-center animate-pulse">
+                {error}
+              </div>
             )}
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full px-4 py-3 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
-            >
-              {isLoading ? "Resetting..." : "Reset Password"}
-            </button>
+            <Button type="submit" isLoading={isLoading} className="!w-full">
+              {isLoading ? t("submitting") : t("submitBtn")}
+            </Button>
           </form>
         )}
+      </div>
+
+      {/* Footer Copy */}
+      <div className="fixed bottom-6 text-xs text-gray-400">
+        &copy; {new Date().getFullYear()} AfroBraid Connect
       </div>
     </main>
   );

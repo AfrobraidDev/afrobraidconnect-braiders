@@ -218,5 +218,42 @@
     "errorTitle": "Verifizierung fehlgeschlagen",
     "errorDesc": "Der Link ist möglicherweise ungültig oder abgelaufen.",
     "backToLogin": "Zurück zur Anmeldung"
+  },
+  "ForgotPassword": {
+    "title": "Passwort vergessen?",
+    "subtitle": "Keine Sorge! Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "sie@beispiel.de",
+    "submitBtn": "Link senden",
+    "submitting": "Wird gesendet...",
+    "backToLogin": "Zurück zur Anmeldung",
+    "successTitle": "E-Mails prüfen",
+    "successDesc": "Wenn ein Konto für {email} existiert, haben wir einen Link zum Zurücksetzen des Passworts gesendet.",
+    "errorGeneric": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "ResetPassword": {
+    "title": "Neues Passwort festlegen",
+    "subtitle": "Bitte geben Sie unten Ihr neues Passwort ein.",
+    "passwordLabel": "Neues Passwort",
+    "confirmPasswordLabel": "Neues Passwort bestätigen",
+    "placeholder": "••••••••",
+    "submitBtn": "Passwort zurücksetzen",
+    "submitting": "Wird zurückgesetzt...",
+    "successMessage": "Ihr Passwort wurde erfolgreich zurückgesetzt! Sie können sich jetzt anmelden.",
+    "loginLink": "Zur Anmeldung",
+    "errorMatch": "Passwörter stimmen nicht überein.",
+    "errorGeneric": "Fehler beim Zurücksetzen des Passworts. Der Link ist möglicherweise ungültig oder abgelaufen."
+  },
+  "ResendVerification": {
+    "title": "Verifizierungs-E-Mail erneut senden",
+    "subtitle": "Geben Sie Ihre E-Mail-Adresse ein, um einen neuen Verifizierungslink zu erhalten.",
+    "emailLabel": "E-Mail-Adresse",
+    "placeholder": "sie@beispiel.de",
+    "submitBtn": "Link erneut senden",
+    "submitting": "Wird gesendet...",
+    "backToLogin": "Zurück zur Anmeldung",
+    "successTitle": "Verifizierung gesendet!",
+    "successDesc": "Wenn ein Konto für {email} existiert, haben wir einen neuen Verifizierungslink gesendet.",
+    "errorGeneric": "Ein Fehler ist aufgetreten. Bitte überprüfen Sie die E-Mail und versuchen Sie es erneut."
   }
 }

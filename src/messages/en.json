@@ -218,5 +218,42 @@
     "errorTitle": "Verification Failed",
     "errorDesc": "The link may be invalid or expired.",
     "backToLogin": "Back to Login"
+  },
+  "ForgotPassword": {
+    "title": "Forgot Password?",
+    "subtitle": "No worries! Enter your email address and we will send you a link to reset your password.",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "submitBtn": "Send Reset Link",
+    "submitting": "Sending...",
+    "backToLogin": "Back to Login",
+    "successTitle": "Check your email",
+    "successDesc": "If an account exists for {email}, we have sent a password reset link.",
+    "errorGeneric": "An error occurred. Please try again."
+  },
+  "ResetPassword": {
+    "title": "Set New Password",
+    "subtitle": "Please enter your new password below.",
+    "passwordLabel": "New Password",
+    "confirmPasswordLabel": "Confirm New Password",
+    "placeholder": "••••••••",
+    "submitBtn": "Reset Password",
+    "submitting": "Resetting...",
+    "successMessage": "Your password has been reset successfully! You can now log in.",
+    "loginLink": "Go to Login",
+    "errorMatch": "Passwords do not match.",
+    "errorGeneric": "Failed to reset password. The link may be invalid or expired."
+  },
+  "ResendVerification": {
+    "title": "Resend Verification Email",
+    "subtitle": "Enter your email address to receive a new verification link.",
+    "emailLabel": "Email Address",
+    "placeholder": "you@example.com",
+    "submitBtn": "Resend Link",
+    "submitting": "Sending...",
+    "backToLogin": "Back to Login",
+    "successTitle": "Verification Sent!",
+    "successDesc": "If an account exists for {email}, we have sent a new verification link.",
+    "errorGeneric": "An error occurred. Please check the email and try again."
   }
 }

@@ -83,7 +83,7 @@ export default function VerifyEmailPage() {
             {t("successDesc")}
           </p>
 
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+          <div className="bg-gray-50 p-6 border border-gray-100">
             <p className="text-sm font-medium text-gray-500 mb-4">
               {t("redirecting", { count: countdown })}
             </p>

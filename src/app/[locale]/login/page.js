@@ -1,18 +1,14 @@
-'use client';
-import { useRouter } from 'next/navigation';
-import LoginView from '@/components/setup/Login';
+"use client";
+
+import { useRouter } from "@/navigation";
+import LoginView from "@/components/setup/Login";
 
 export default function LoginPage() {
-    const router = useRouter();
+  const router = useRouter();
 
-    const handleBack = () => {
-        // Go back to the role selection screen
-        router.back();
-    };
+  const handleBack = () => {
+    router.back();
+  };
 
-    return (
-        <LoginView 
-            onBack={handleBack}
-        />
-    );
+  return <LoginView onBack={handleBack} />;
 }

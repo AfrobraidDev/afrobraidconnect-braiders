@@ -1,98 +1,118 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Mail, ArrowLeft } from "lucide-react";
+import { Link } from "@/navigation";
+import { useTranslations } from "next-intl";
+import { Mail, ArrowLeft, KeyRound, CheckCircle2 } from "lucide-react";
 import { apiController } from "@/utils/apiController";
+import Input from "@/components/generics/ui/Input";
+import Button from "@/components/generics/ui/Button";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("ForgotPassword");
+
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccessMessage("");
     setIsLoading(true);
 
     try {
-      const response = await apiController({
+      await apiController({
         method: "POST",
         url: "/auth/request-reset-email/",
         data: { email },
       });
-      setSuccessMessage(response.success);
+      setIsSuccess(true);
     } catch (err) {
-      setError(err.detail || "An error occurred. Please try again.");
+      console.error(err);
+      setError(err?.detail || t("errorGeneric"));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">Forgot Password</h1>
-          <p className="mt-2 text-gray-600">
-            Enter your email and we&apos;ll send you a link to reset your
-            password.
+    <main className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+      <div className="w-full max-w-md p-8 bg-white shadow-xl border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="flex justify-center mb-6">
+          <div
+            className={`p-4 rounded-full ${
+              isSuccess ? "bg-green-50" : "bg-orange-50"
+            }`}
+          >
+            {isSuccess ? (
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            ) : (
+              <KeyRound className="w-8 h-8 text-[#b5734c]" />
+            )}
+          </div>
+        </div>
+
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {isSuccess ? t("successTitle") : t("title")}
+          </h1>
+          <p className="mt-2 text-sm text-gray-600">
+            {isSuccess ? t("successDesc", { email: email }) : t("subtitle")}
           </p>
         </div>
 
-        {successMessage ? (
-          <div className="p-4 text-center text-green-800 bg-green-100 border border-green-200 rounded-lg">
-            <p>{successMessage}</p>
+        {isSuccess ? (
+          <div className="space-y-4">
+            <Link href="/login" className="block">
+              <Button className="!w-full">{t("backToLogin")}</Button>
+            </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Mail className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full py-2 pl-10 pr-3 text-gray-900 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Email address"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <Input
+                label={t("emailLabel")}
+                type="email"
+                icon={Mail}
+                id="email"
+                placeholder={t("emailPlaceholder")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
             </div>
 
             {error && (
-              <p className="text-sm text-center text-red-600">{error}</p>
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg text-center animate-pulse">
+                {error}
+              </div>
             )}
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full px-4 py-3 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
-            >
-              {isLoading ? "Sending Link..." : "Send Reset Link"}
-            </button>
+            <Button type="submit" isLoading={isLoading} className="!w-full">
+              {isLoading ? t("submitting") : t("submitBtn")}
+            </Button>
+
+            <div className="text-center pt-2">
+              <Link
+                href="/login"
+                className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-[#b5734c] transition-colors group"
+              >
+                <ArrowLeft
+                  size={16}
+                  className="mr-2 group-hover:-translate-x-1 transition-transform"
+                />
+                {t("backToLogin")}
+              </Link>
+            </div>
           </form>
         )}
+      </div>
 
-        <div className="text-sm text-center">
-          <Link
-            href="/login"
-            className="font-medium text-indigo-600 hover:underline flex items-center justify-center gap-1"
-          >
-            <ArrowLeft size={16} />
-            Back to Login
-          </Link>
-        </div>
+      {/* Footer Copy */}
+      <div className="fixed bottom-6 text-xs text-gray-400">
+        &copy; {new Date().getFullYear()} AfroBraid Connect
       </div>
     </main>
   );
