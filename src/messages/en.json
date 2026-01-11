@@ -207,5 +207,16 @@
     "updatedSuccess": "Service updated!",
     "createdSuccess": "Service created!",
     "errorOccurred": "An error occurred."
+  },
+  "VerifyEmail": {
+    "verifyingTitle": "Verifying your email...",
+    "verifyingDesc": "Please wait while we confirm your account.",
+    "successTitle": "Email Verified Successfully!",
+    "successDesc": "Your account has been activated. You can now log in.",
+    "redirecting": "Redirecting to login in {count} seconds...",
+    "manualRedirect": "Go to Login Now",
+    "errorTitle": "Verification Failed",
+    "errorDesc": "The link may be invalid or expired.",
+    "backToLogin": "Back to Login"
   }
 }

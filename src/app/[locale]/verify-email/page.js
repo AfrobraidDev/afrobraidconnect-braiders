@@ -1,104 +1,130 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { CheckCircle, XCircle, Loader } from "lucide-react";
+import { useRouter, Link } from "@/navigation";
+import { useTranslations } from "next-intl";
+import { Loader2, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import { apiController } from "@/utils/apiController";
+import Button from "@/components/generics/ui/Button";
 
-function VerificationComponent() {
+export default function VerifyEmailPage() {
+  const t = useTranslations("VerifyEmail");
+  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const [status, setStatus] = useState("verifying");
-  const [message, setMessage] = useState(
-    "Verifying your email, please wait..."
-  );
+
+  const [status, setStatus] = useState("loading");
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     if (!token) {
       setStatus("error");
-      setMessage("Verification token is missing. Please check the link.");
       return;
     }
 
-    const verifyEmail = async () => {
+    const verifyToken = async () => {
       try {
-        const response = await apiController({
+        await apiController({
           method: "GET",
-          url: `/auth/verify-email/`,
-          params: { token },
+          url: `/auth/verify-email/?token=${token}`,
         });
-
-        if (response.email === "Successfully activated") {
-          setStatus("success");
-          setMessage("Your email has been successfully verified!");
-        } else {
-          throw new Error("Unexpected response from server.");
-        }
+        setStatus("success");
       } catch (error) {
+        console.error("Verification Error:", error);
         setStatus("error");
-        setMessage(
-          error.detail ||
-            "Verification failed. The link may be expired or invalid."
-        );
       }
     };
 
-    verifyEmail();
+    verifyToken();
   }, [token]);
 
-  return (
-    <div className="w-full max-w-md p-8 space-y-6 text-center bg-white rounded-xl shadow-lg">
-      {status === "verifying" && (
-        <>
-          <Loader className="w-12 h-12 mx-auto text-indigo-600 animate-spin" />
-          <h1 className="text-2xl font-bold text-gray-800">Verifying...</h1>
-        </>
-      )}
-      {status === "success" && (
-        <>
-          <CheckCircle className="w-16 h-16 mx-auto text-green-500" />
-          <h1 className="text-2xl font-bold text-green-700">
-            Verification Successful!
-          </h1>
-        </>
-      )}
-      {status === "error" && (
-        <>
-          <XCircle className="w-16 h-16 mx-auto text-red-500" />
-          <h1 className="text-2xl font-bold text-red-700">
-            Verification Failed
-          </h1>
-        </>
-      )}
-      <p className="text-gray-600">
-        {message}
-        <br />
-        <Link
-          href="/resend-verification"
-          className="font-semibold text-indigo-600 hover:underline"
-        >
-          Request a new one.
-        </Link>
-      </p>
-      {status !== "verifying" && (
-        <Link
-          href="/login"
-          className="inline-block w-full px-4 py-3 mt-4 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
-        >
-          Proceed to Login
-        </Link>
-      )}
-    </div>
-  );
-}
+  useEffect(() => {
+    let timer;
+    if (status === "success" && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [status, countdown]);
 
-export default function VerifyEmailPage() {
+  useEffect(() => {
+    if (status === "success" && countdown === 0) {
+      router.push("/login");
+    }
+  }, [status, countdown, router]);
+
+  const renderContent = () => {
+    if (status === "loading") {
+      return (
+        <div className="text-center animate-in fade-in duration-500">
+          <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Loader2 className="w-8 h-8 text-[#b5734c] animate-spin" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            {t("verifyingTitle")}
+          </h1>
+          <p className="text-gray-500">{t("verifyingDesc")}</p>
+        </div>
+      );
+    }
+
+    if (status === "success") {
+      return (
+        <div className="text-center animate-in zoom-in-95 duration-500">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <CheckCircle2 className="w-10 h-10 text-green-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            {t("successTitle")}
+          </h1>
+          <p className="text-gray-600 mb-8 max-w-sm mx-auto">
+            {t("successDesc")}
+          </p>
+
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+            <p className="text-sm font-medium text-gray-500 mb-4">
+              {t("redirecting", { count: countdown })}
+            </p>
+
+            <Link href="/login">
+              <Button className="!w-auto px-8 shadow-lg shadow-orange-900/10">
+                {t("manualRedirect")} <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
+    if (status === "error") {
+      return (
+        <div className="text-center animate-in zoom-in-95 duration-500">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <XCircle className="w-10 h-10 text-red-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+            {t("errorTitle")}
+          </h1>
+          <p className="text-gray-600 mb-8">{t("errorDesc")}</p>
+
+          <Link href="/login">
+            <Button variant="outline" className="!w-auto px-8">
+              {t("backToLogin")}
+            </Button>
+          </Link>
+        </div>
+      );
+    }
+  };
+
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-50">
-      <Suspense fallback={<p>Loading...</p>}>
-        <VerificationComponent />
-      </Suspense>
-    </main>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
+      <div className="w-full max-w-lg p-8">{renderContent()}</div>
+      <div className="fixed bottom-8 text-xs text-gray-400">
+        &copy; {new Date().getFullYear()} AfroBraid Connect
+      </div>
+    </div>
   );
 }
