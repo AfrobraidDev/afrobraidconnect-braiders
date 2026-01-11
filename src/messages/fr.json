@@ -207,5 +207,16 @@
     "updatedSuccess": "Service mis à jour !",
     "createdSuccess": "Service créé !",
     "errorOccurred": "Une erreur s'est produite."
+  },
+  "VerifyEmail": {
+    "verifyingTitle": "Vérification de votre e-mail...",
+    "verifyingDesc": "Veuillez patienter pendant la confirmation de votre compte.",
+    "successTitle": "E-mail vérifié avec succès !",
+    "successDesc": "Votre compte a été activé. Vous pouvez maintenant vous connecter.",
+    "redirecting": "Redirection vers la connexion dans {count} secondes...",
+    "manualRedirect": "Se connecter maintenant",
+    "errorTitle": "Échec de la vérification",
+    "errorDesc": "Le lien peut être invalide ou expiré.",
+    "backToLogin": "Retour à la connexion"
   }
 }

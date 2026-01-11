@@ -207,5 +207,16 @@
     "updatedSuccess": "Dienstleistung aktualisiert!",
     "createdSuccess": "Dienstleistung erstellt!",
     "errorOccurred": "Ein Fehler ist aufgetreten."
+  },
+  "VerifyEmail": {
+    "verifyingTitle": "E-Mail wird verifiziert...",
+    "verifyingDesc": "Bitte warten Sie, während wir Ihr Konto bestätigen.",
+    "successTitle": "E-Mail erfolgreich verifiziert!",
+    "successDesc": "Ihr Konto wurde aktiviert. Sie können sich jetzt anmelden.",
+    "redirecting": "Weiterleitung zur Anmeldung in {count} Sekunden...",
+    "manualRedirect": "Jetzt anmelden",
+    "errorTitle": "Verifizierung fehlgeschlagen",
+    "errorDesc": "Der Link ist möglicherweise ungültig oder abgelaufen.",
+    "backToLogin": "Zurück zur Anmeldung"
   }
 }
