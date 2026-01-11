@@ -1,7 +1,7 @@
-// src/auth.js
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { apiController } from "./utils/apiController";
+import { cookies } from "next/headers";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error("Missing Google OAuth credentials in .env.local");
@@ -12,6 +12,13 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -55,13 +62,21 @@ export const authOptions = {
     async signIn({ user, account }) {
       if (account.provider === "google") {
         try {
+          const cookieStore = await cookies();
+          const intent = cookieStore.get("auth-intent")?.value;
+
+          let endpoint = "/auth/google/login/";
+          let payload = { id_token: account.id_token };
+
+          if (intent === "signup") {
+            endpoint = "/auth/google/signup/";
+            payload.role = "BRAIDER";
+          }
+
           const data = await apiController({
             method: "POST",
-            url: "/auth/google/",
-            data: {
-              id_token: account.id_token,
-              role: "BRAIDER",
-            },
+            url: endpoint,
+            data: payload,
           });
 
           if (data.access) {
@@ -73,14 +88,41 @@ export const authOptions = {
             user.braiderProfile = data.braider_profile;
             return true;
           }
-          return false;
+
+          throw new Error("Authentication failed");
         } catch (error) {
-          return false;
+          console.error("Google Auth Error:", error);
+
+          const cookieStore = await cookies();
+          const locale = cookieStore.get("NEXT_LOCALE")?.value || "en";
+          const intent = cookieStore.get("auth-intent")?.value;
+
+          let errorMessage = "Authentication failed";
+
+          if (error?.message) errorMessage = error.message;
+          if (error?.data?.error) errorMessage = error.data.error;
+          if (error?.error) errorMessage = error.error;
+
+          const lowerMsg = String(errorMessage).toLowerCase();
+
+          let redirectPath =
+            intent === "signup" ? `/${locale}/signup` : `/${locale}/login`;
+
+          if (
+            lowerMsg.includes("account already exists") &&
+            intent === "signup"
+          ) {
+            redirectPath = `/${locale}/login`;
+          }
+
+          return `${redirectPath}?error=${encodeURIComponent(errorMessage)}`;
         }
       }
+
       if (account.provider === "credentials") {
         return true;
       }
+
       return false;
     },
     async jwt({ token, user }) {

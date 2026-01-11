@@ -1,29 +1,53 @@
 "use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { signIn, getSession } from "next-auth/react";
-import { useRouter, usePathname } from "@/navigation";
+import { useRouter, usePathname, Link } from "@/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { Lock, Mail, Globe, ChevronUp, Check } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { useTranslations, useLocale } from "next-intl";
 import Input from "../generics/ui/Input";
 import Button from "../generics/ui/Button";
-import { useTranslations, useLocale } from "next-intl";
+
+function setAuthIntent(intent) {
+  document.cookie = `auth-intent=${intent}; path=/; max-age=300`;
+}
 
 export default function LoginView({ onBack }) {
   const t = useTranslations("Auth");
   const currentLocale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
   const [emailError, setEmailError] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const langMenuRef = useRef(null);
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+
+    if (errorParam) {
+      if (errorParam === "AccountExists") {
+        setError(
+          t("accountExistsError") ||
+            "This account already exists. Please log in."
+        );
+      } else if (errorParam === "AuthFailed") {
+        setError("Account not found. Please sign up first.");
+      } else {
+        setError(errorParam);
+      }
+    }
+  }, [searchParams, t]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -47,6 +71,8 @@ export default function LoginView({ onBack }) {
   };
 
   const handleGoogleSignIn = () => {
+    setAuthIntent("login");
+
     signIn("google", {
       callbackUrl: `/${currentLocale}/auth/callback`,
     });
@@ -55,6 +81,7 @@ export default function LoginView({ onBack }) {
   const handleCredentialsSignIn = async (e) => {
     e.preventDefault();
     setError("");
+    setEmailError("");
     setIsLoading(true);
 
     const result = await signIn("credentials", {
@@ -86,12 +113,20 @@ export default function LoginView({ onBack }) {
 
   return (
     <div className="min-h-screen flex bg-white">
+      {/* Left Column: Form */}
       <div className="w-full md:w-1/2 flex flex-col justify-between p-6 sm:p-10 lg:p-16">
         <main className="flex-grow flex flex-col justify-center max-w-md mx-auto py-10 w-full">
           <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900 mb-2">
             {t("loginTitle")}
           </h1>
           <p className="text-base text-gray-600 mb-8">{t("loginSubtitle")}</p>
+
+          {error && (
+            <div className="mb-6 p-4 text-sm text-red-700 bg-red-50 border border-red-200 animate-in fade-in slide-in-from-top-2">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleCredentialsSignIn} className="space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -104,7 +139,7 @@ export default function LoginView({ onBack }) {
                 <Input
                   type="email"
                   icon={Mail}
-                  placeholder="hello@teni.com"
+                  placeholder="hello@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   error={emailError}
@@ -112,6 +147,7 @@ export default function LoginView({ onBack }) {
                 />
               </div>
             </div>
+
             <div>
               <label htmlFor="password" className="sr-only">
                 Password
@@ -123,13 +159,12 @@ export default function LoginView({ onBack }) {
                 <Input
                   type="password"
                   icon={Lock}
-                  placeholder="Password"
+                  placeholder={t("passwordPlaceholder") || "Password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-
               <div className="flex justify-end mt-2 text-sm">
                 <Link
                   href="/forgot-password"
@@ -140,26 +175,26 @@ export default function LoginView({ onBack }) {
               </div>
             </div>
 
-            {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-4 py-3 font-semibold text-white bg-[#b5734c] hover:bg-[#b47550] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b47550] disabled:bg-[#b5734c]"
+              className="w-full px-4 py-3 font-semibold text-white bg-[#b5734c] hover:bg-[#b47550] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b47550] disabled:opacity-70 transition-colors"
             >
               {isLoading ? t("signingIn") : t("signIn")}
             </button>
           </form>
+
           <div className="flex items-center my-6">
             <hr className="flex-grow border-gray-200" />
             <span className="px-4 text-sm text-gray-500">{t("or")}</span>
             <hr className="flex-grow border-gray-200" />
           </div>
+
           <Button
             variant="outline"
             onClick={handleGoogleSignIn}
             icon={FcGoogle}
-            className="mt-6"
+            className="w-full"
           >
             {t("googleSignIn")}
           </Button>
@@ -167,7 +202,7 @@ export default function LoginView({ onBack }) {
           <p className="text-center text-sm text-gray-600 mt-8">
             {t("signUpPrompt")}{" "}
             <Link
-              href="/register"
+              href="/signup"
               className="text-[#b5734c] font-medium hover:underline ml-1"
             >
               {t("signUpLink")}
@@ -175,19 +210,20 @@ export default function LoginView({ onBack }) {
           </p>
 
           <p className="text-center text-sm text-gray-600 mt-2">
-            Haven&apos;t verified my account?{" "}
+            {t("notVerifiedPrompt")}{" "}
             <Link
               href="/resend-verification"
               className="text-[#b5734c] font-medium hover:underline ml-1"
             >
-              Revalidate
+              {t("revalidateLink")}
             </Link>
           </p>
         </main>
+
         <footer className="mt-12 flex justify-between items-center text-xs text-gray-500 relative">
           <div className="flex items-center space-x-1">
             <Mail className="w-4 h-4" />
-            <span>support@afrobraidconnect.com</span>
+            <span>support@afrobraidconnect.de</span>
           </div>
           <div className="relative" ref={langMenuRef}>
             <button
@@ -231,6 +267,7 @@ export default function LoginView({ onBack }) {
         </footer>
       </div>
 
+      {/* Right Column: Image */}
       <div className="relative w-1/2 bg-gray-200 hidden md:block">
         <Image
           src="/images/hero.png"
