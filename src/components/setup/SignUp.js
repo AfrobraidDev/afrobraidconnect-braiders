@@ -331,7 +331,7 @@ export default function SignupView({ onBack }) {
       {/* RIGHT IMAGE PANEL */}
       <div className="relative w-1/2 bg-gray-200 hidden md:block">
         <Image
-          src="/images/hero.png"
+          src="/images/person8.jpg"
           alt="Customer booking appointment"
           fill
           priority
