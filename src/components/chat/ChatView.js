@@ -111,7 +111,7 @@ export default function ChatView({
           fetchNextPage();
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     if (topObserverRef.current) {
@@ -221,8 +221,8 @@ export default function ChatView({
               {isLoading
                 ? "Loading..."
                 : isConnected
-                ? "Active now"
-                : "Connecting..."}
+                  ? "Active now"
+                  : "Connecting..."}
             </p>
           </div>
         </div>
